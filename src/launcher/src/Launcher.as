@@ -1,18 +1,10 @@
 package src
 {
-    import flash.display.Bitmap;
-    import flash.display.Loader;
     import flash.display.Sprite;
     import flash.events.Event;
-    import flash.events.KeyboardEvent;
-    import flash.geom.Vector3D;
-    import flash.net.URLRequest;
-
-    import away3d.containers.View3D;
-    import away3d.entities.Mesh;
-    import away3d.materials.TextureMaterial;
-    import away3d.primitives.PlaneGeometry;
-    import away3d.textures.BitmapTexture;
+    import flash.events.ProgressEvent;
+    import flash.net.Socket;
+    import flash.utils.ByteArray;
 
     /**
      * 启动器
@@ -23,65 +15,48 @@ package src
         , backgroundColor = "0x000000")]
     public class Launcher extends Sprite
     {
-        private var _view:View3D;
-        private var _plane:Mesh;
-
-        private var _loader:Loader;
-
-        private var _bKeyDown:Boolean = false;
+        private var _socket:Socket;
 
 
         public function Launcher()
         {
             addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
-            addEventListener(Event.ENTER_FRAME, onEnterFrame);
         }
 
         private function onAddedToStage(e:Event):void
         {
-            _view = new View3D();
-            stage.addChild(_view);
-
-            _loader = new Loader();
-            _loader.contentLoaderInfo.addEventListener(Event.COMPLETE, onLoaded);
-            _loader.load(new URLRequest("res/bg.png"));
-
-            stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
-            stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
+            _socket = new Socket();
+            _socket.addEventListener(Event.CONNECT, onSocketConnected);
+            _socket.addEventListener(ProgressEvent.SOCKET_DATA, onSocketData);
+            _socket.connect("127.0.0.1", 5555);
         }
-
-        private function onLoaded(e:Event):void
+        
+        private function onSocketConnected(e:Event):void
         {
-            var bmp:Bitmap = _loader.content as Bitmap;
-            var bmpTex:BitmapTexture = new BitmapTexture(bmp.bitmapData);
-            var texMtr:TextureMaterial = new TextureMaterial(bmpTex);
-
-            var planeGeom:PlaneGeometry = new PlaneGeometry(bmp.width
-                , bmp.height);
-            _plane = new Mesh(planeGeom, texMtr);
-            _plane.mouseEnabled = true;
-            trace(_plane.position);
-
-            _view.camera.moveTo(-512, 800, -500);
-            _view.camera.lookAt(new Vector3D(512, 0, 256));
-            _view.scene.addChild(_plane);
+            trace("----------------------");
         }
-
-        private function onKeyDown(e:KeyboardEvent):void
+        
+        private function onSocketData(e:ProgressEvent):void
         {
-            _bKeyDown = true;
-        }
-
-        private function onKeyUp(e:KeyboardEvent):void
-        {
-            _bKeyDown = false;
-        }
-
-        private function onEnterFrame(e:Event):void
-        {
-            if (_bKeyDown)
-                _plane.rotationY += 1;
-            _view.render();
+            var ba:ByteArray = new ByteArray();
+            _socket.readBytes(ba);
+            var str:String = ba.toString();
+            ba.position = 0;
+            var a1:int = ba.readByte();
+            var a2:int = ba.readByte();
+            var a3:int = ba.readByte();
+            var a4:int = ba.readByte();
+            var a5:int = ba.readByte();
+            var a6:int = ba.readByte();
+            
+            var a7:int = ba.readByte();
+            var a8:int = ba.readByte();
+            var a9:int = ba.readByte();
+            var a10:int = ba.readByte();
+            var a11:int = ba.readByte();
+            var a12:int = ba.readByte();
+            str = ba.toString();
+            trace(str);
         }
     }
 }

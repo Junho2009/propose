@@ -44,7 +44,7 @@ package src
 
             _loader = new Loader();
             _loader.contentLoaderInfo.addEventListener(Event.COMPLETE, onLoaded);
-            _loader.load(new URLRequest("res/bg.jpg"));
+            _loader.load(new URLRequest("res/bg.png"));
 
             stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
             stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);

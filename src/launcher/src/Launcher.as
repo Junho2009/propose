@@ -41,6 +41,7 @@ package src
             var ba:ByteArray = new ByteArray();
             _socket.readBytes(ba);
             var str:String = ba.toString();
+            
             ba.position = 0;
             var a1:int = ba.readByte();
             var a2:int = ba.readByte();
@@ -49,13 +50,9 @@ package src
             var a5:int = ba.readByte();
             var a6:int = ba.readByte();
             
-            var a7:int = ba.readByte();
-            var a8:int = ba.readByte();
-            var a9:int = ba.readByte();
-            var a10:int = ba.readByte();
-            var a11:int = ba.readByte();
-            var a12:int = ba.readByte();
-            str = ba.toString();
+            var strLen:uint = ba.readByte();
+            var str2:String = ba.readUTFBytes(strLen);
+            
             trace(str);
         }
     }

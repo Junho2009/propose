@@ -5,6 +5,7 @@ package src
     import flash.events.ProgressEvent;
     import flash.net.Socket;
     import flash.utils.ByteArray;
+    import flash.utils.Endian;
 
     /**
      * 启动器
@@ -42,18 +43,10 @@ package src
             _socket.readBytes(ba);
             var str:String = ba.toString();
             
-            ba.position = 0;
-            var a1:int = ba.readByte();
-            var a2:int = ba.readByte();
-            var a3:int = ba.readByte();
-            var a4:int = ba.readByte();
-            var a5:int = ba.readByte();
-            var a6:int = ba.readByte();
+            ba.position = 6;
+            var str2:String = ba.readUTFBytes(ba.bytesAvailable);
             
-            var strLen:uint = ba.readByte();
-            var str2:String = ba.readUTFBytes(strLen);
-            
-            trace(str);
+            trace(str2);
         }
     }
 }

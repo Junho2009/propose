@@ -69,6 +69,8 @@ package src
         private function onConnect(e:Event):void
         {
             trace("socket连接成功");
+            _socket.writeUTFBytes("test abcdefg");
+            _socket.flush();
         }
         
         private function onClose(e:Event):void

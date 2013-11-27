@@ -86,6 +86,9 @@ package commons.singleton.buses
         {
             var str:String = rawData.toString();
             trace(str);
+            
+            _socket.writeUTFBytes("test abcdefg\n");
+            _socket.flush();
         }
     }
 }

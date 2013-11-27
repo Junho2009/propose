@@ -2,10 +2,14 @@ package src
 {
     import flash.display.Sprite;
     import flash.events.Event;
+    import flash.events.IOErrorEvent;
     import flash.events.ProgressEvent;
     import flash.net.Socket;
     import flash.utils.ByteArray;
-    import flash.utils.Endian;
+    
+    import commons.singleton.GlobalContext;
+    import commons.singleton.MySocket;
+    import commons.singleton.buses.NetBus;
 
     /**
      * 启动器
@@ -16,37 +20,65 @@ package src
         , backgroundColor = "0x000000")]
     public class Launcher extends Sprite
     {
+        private var _context:GlobalContext = GlobalContext.getInstance();
         private var _socket:Socket;
 
 
         public function Launcher()
         {
+            initConfig();
             addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
+        }
+        
+        
+        
+        private function initConfig():void
+        {
+            //testing
+            _context.config.serverAddr = "127.0.0.1";
+            _context.config.serverPort = 5555;
+            //...
         }
 
         private function onAddedToStage(e:Event):void
         {
-            _socket = new Socket();
-            _socket.addEventListener(Event.CONNECT, onSocketConnected);
-            _socket.addEventListener(ProgressEvent.SOCKET_DATA, onSocketData);
-            _socket.connect("127.0.0.1", 5555);
+            initLauncher();
         }
         
-        private function onSocketConnected(e:Event):void
+        private function initLauncher():void
         {
-            trace("----------------------");
+            GlobalContext.init(this);
+            initSocket();
+            initBuses();
         }
         
-        private function onSocketData(e:ProgressEvent):void
+        private function initSocket():void
         {
-            var ba:ByteArray = new ByteArray();
-            _socket.readBytes(ba);
-            var str:String = ba.toString();
-            
-            ba.position = 6;
-            var str2:String = ba.readUTFBytes(ba.bytesAvailable);
-            
-            trace(str2);
+            _socket = MySocket.getInstance();
+            _socket.addEventListener(Event.CONNECT, onConnect);
+            _socket.addEventListener(Event.CLOSE, onClose);
+            _socket.addEventListener(IOErrorEvent.IO_ERROR, onSocketIOError);
+            _socket.connect(_context.config.serverAddr, _context.config.serverPort);
+        }
+        
+        private function initBuses():void
+        {
+            NetBus.getInstance();
+        }
+        
+        private function onConnect(e:Event):void
+        {
+            trace("socket连接成功");
+        }
+        
+        private function onClose(e:Event):void
+        {
+            trace("socket已关闭");
+        }
+        
+        private function onSocketIOError(e:IOErrorEvent):void
+        {
+            trace("socket发生IO错误");
         }
     }
 }

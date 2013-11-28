@@ -49,6 +49,16 @@ package commons.singleton
             _callbackList.push(callback);
         }
         
+        public function send(data:ByteArray):void
+        {
+            if (!connected)
+                return;
+            
+            data.position = 0;
+            writeBytes(data, 0, data.bytesAvailable);
+            flush();
+        }
+        
         override public function connect(host:String, port:int):void
         {
             if (connected)

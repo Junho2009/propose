@@ -1,4 +1,4 @@
-package commons.singleton.protos
+package commons.protos.base
 {
     import flash.utils.ByteArray;
 
@@ -6,7 +6,7 @@ package commons.singleton.protos
      * 从文字版mud服务器收到的协议
      * @author Junho
      * <br/>Create: 2013.11.27
-     */    
+     */
     public class MudProtoIn extends ProtoInBase
     {
         private static const _DataDelimiter:String = "|";

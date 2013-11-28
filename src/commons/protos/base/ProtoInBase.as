@@ -1,4 +1,4 @@
-package commons.singleton.protos
+package commons.protos.base
 {
     import flash.errors.IllegalOperationError;
     import flash.utils.ByteArray;
@@ -7,7 +7,7 @@ package commons.singleton.protos
      * 收到的协议对象基类
      * @author Junho
      * <br/>Create: 2013.11.27
-     */    
+     */
     public class ProtoInBase
     {
         protected var _rawData:ByteArray;

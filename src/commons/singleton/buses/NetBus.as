@@ -5,6 +5,8 @@ package commons.singleton.buses
     import flash.utils.ByteArray;
     import flash.utils.Dictionary;
     
+    import commons.protos.base.ProtoOutBase;
+    import commons.singleton.MudUtil;
     import commons.singleton.MySocket;
     
     /**
@@ -52,6 +54,12 @@ package commons.singleton.buses
         
         
         
+        public function send(protoOut:ProtoOutBase):void
+        {
+            protoOut.ready();
+            _socket.send(protoOut.data);
+        }
+        
         public function addCallback(protoNo:uint, callback:Function):void
         {
             var protoCallbackList:Vector.<Function> = _protoCallbackListDic[protoNo] as Vector.<Function>;
@@ -85,10 +93,7 @@ package commons.singleton.buses
         private function handleProto(rawData:ByteArray):void
         {
             var str:String = rawData.toString();
-            trace(str);
-            
-            _socket.writeUTFBytes("test abcdefg\n");
-            _socket.flush();
+            trace(MudUtil.mud2ClientStr(str));
         }
     }
 }

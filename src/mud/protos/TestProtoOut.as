@@ -1,6 +1,6 @@
-package commons.protos
+package mud.protos
 {
-    import commons.protos.base.MudProtoOut;
+    import mud.protos.base.MudProtoOut;
     
     public class TestProtoOut extends MudProtoOut
     {

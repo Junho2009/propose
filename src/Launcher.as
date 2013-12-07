@@ -6,10 +6,21 @@ package
     import flash.events.MouseEvent;
     import flash.net.Socket;
     
-    import commons.protos.TestProtoOut;
-    import commons.singleton.GlobalContext;
-    import commons.singleton.MySocket;
-    import commons.singleton.buses.NetBus;
+    import commons.GlobalContext;
+    import commons.MySocket;
+    import commons.buses.NetBus;
+    import commons.debug.Debug;
+    import commons.manager.base.ManagerGlobalName;
+    import commons.manager.base.ManagerHub;
+    import commons.module.ModuleManager;
+    
+    import mud.MudModule;
+    import mud.protos.BlessProtoOut;
+    import mud.protos.TestProtoIn;
+    import mud.protos.TestProtoOut;
+    
+    import webgame.core.GlobalContext;
+    import webgame.ui.GixButton;
 
     /**
      * 启动器
@@ -20,7 +31,7 @@ package
         , backgroundColor = "0x000000")]
     public class Launcher extends Sprite
     {
-        private var _context:GlobalContext = GlobalContext.getInstance();
+        private var _context:commons.GlobalContext = commons.GlobalContext.getInstance();
         private var _socket:Socket;
 
 
@@ -39,7 +50,7 @@ package
         {
             //testing
             _context.config.serverAddr = "127.0.0.1";
-            _context.config.serverPort = 5555;
+            _context.config.serverPort = 8360;
             //...
         }
 
@@ -50,9 +61,19 @@ package
         
         private function initLauncher():void
         {
-            GlobalContext.init(this);
+            commons.GlobalContext.init(this);
+            
+            initModules();
             initSocket();
             initBuses();
+        }
+        
+        private function initModules():void
+        {
+            var moduleMgr:ModuleManager = new ModuleManager();
+            ManagerHub.getInstance().register(ManagerGlobalName.ModuleManager, moduleMgr);
+            
+            moduleMgr.addModule(new MudModule());
         }
         
         private function initSocket():void
@@ -67,19 +88,35 @@ package
         private function initBuses():void
         {
             NetBus.getInstance();
+            
+            NetBus.getInstance().addCallback("12345", function(inc:TestProtoIn):void
+            {
+                Debug.log("收到{0}协议. name: {1}, value: {2}, msg: {3}"
+                    , inc.head, inc.name, inc.value, inc.msg);
+            });
         }
         
         private function onConnect(e:Event):void
         {
             trace("socket连接成功");
             
-            var btn:CustomSimpleButton = new CustomSimpleButton();
+            //testing
+            launcherSupportsLib();
+        }
+        
+        private function launcherSupportsLib():void
+        {
+            webgame.core.GlobalContext.init(this);
+            
+            var btn:GixButton = new GixButton();
+            btn.init();
             btn.width = 300;
             btn.height = 200;
             btn.addEventListener(MouseEvent.CLICK, function(e:MouseEvent):void
             {
-                var proto:TestProtoOut = new TestProtoOut();
-                proto.msg = "客户端\n发来\n贺电！";
+                var proto:BlessProtoOut = new BlessProtoOut();
+                proto.name = "俊壕、海霞的朋友";
+                proto.msg = "祝你们白头偕老，永远恩爱！";
                 NetBus.getInstance().send(proto);
             });
             addChild(btn);

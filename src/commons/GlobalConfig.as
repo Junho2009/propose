@@ -1,4 +1,4 @@
-package commons.singleton
+package commons
 {
     import flash.errors.IllegalOperationError;
 

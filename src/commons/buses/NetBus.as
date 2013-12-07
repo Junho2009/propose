@@ -1,13 +1,16 @@
-package commons.singleton.buses
+package commons.buses
 {
     import flash.errors.IllegalOperationError;
     import flash.events.EventDispatcher;
     import flash.utils.ByteArray;
     import flash.utils.Dictionary;
     
-    import commons.protos.base.ProtoOutBase;
-    import commons.singleton.MudUtil;
-    import commons.singleton.MySocket;
+    import commons.MySocket;
+    import commons.manager.IProtoInManager;
+    import commons.manager.base.ManagerGlobalName;
+    import commons.manager.base.ManagerHub;
+    import commons.protos.ProtoInBase;
+    import commons.protos.ProtoOutBase;
     
     /**
      * 网络总线
@@ -19,6 +22,8 @@ package commons.singleton.buses
         private static var _allowInstance:Boolean = false;
         private static var _instance:NetBus = null;
         
+        private var _protoInMgr:IProtoInManager;
+        
         private var _protoCallbackListDic:Dictionary;
         
         private var _socket:MySocket;
@@ -28,6 +33,8 @@ package commons.singleton.buses
         {
             if(!_allowInstance)
                 throw new IllegalOperationError("NetBus is a singleton class.");
+            
+            _protoInMgr = ManagerHub.getInstance().getManager(ManagerGlobalName.ProtoInManager) as IProtoInManager;
             
             _protoCallbackListDic = new Dictionary();
             
@@ -60,20 +67,20 @@ package commons.singleton.buses
             _socket.send(protoOut.data);
         }
         
-        public function addCallback(protoNo:uint, callback:Function):void
+        public function addCallback(protoHead:*, callback:Function):void
         {
-            var protoCallbackList:Vector.<Function> = _protoCallbackListDic[protoNo] as Vector.<Function>;
+            var protoCallbackList:Vector.<Function> = _protoCallbackListDic[protoHead] as Vector.<Function>;
             if (null == protoCallbackList)
             {
                 protoCallbackList = new Vector.<Function>();
-                _protoCallbackListDic[protoNo] = protoCallbackList;
+                _protoCallbackListDic[protoHead] = protoCallbackList;
             }
             protoCallbackList.push(callback);
         }
         
-        public function removeCallback(protoNo:uint, callback:Function):void
+        public function removeCallback(protoHead:*, callback:Function):void
         {
-            var protoCallbackList:Vector.<Function> = _protoCallbackListDic[protoNo] as Vector.<Function>;
+            var protoCallbackList:Vector.<Function> = _protoCallbackListDic[protoHead] as Vector.<Function>;
             if (null == protoCallbackList)
                 return;
             
@@ -83,8 +90,8 @@ package commons.singleton.buses
             
             if (0 == protoCallbackList.length)
             {
-                _protoCallbackListDic[protoNo] = null;
-                delete _protoCallbackListDic[protoNo];
+                _protoCallbackListDic[protoHead] = null;
+                delete _protoCallbackListDic[protoHead];
             }
         }
         
@@ -92,8 +99,27 @@ package commons.singleton.buses
         
         private function handleProto(rawData:ByteArray):void
         {
-            var str:String = rawData.toString();
-            trace(MudUtil.mud2ClientStr(str));
+            var protoInList:Vector.<ProtoInBase> = _protoInMgr.toProtoIn(rawData);
+            if (null != protoInList && protoInList.length > 0)
+            {
+                const protoInListLen:uint = protoInList.length;
+                for (var i:int = 0; i < protoInListLen; ++i)
+                {
+                    var protoIn:ProtoInBase = protoInList[i];
+                    
+                    var callbackList:Vector.<Function> = _protoCallbackListDic[protoIn.head] as Vector.<Function>;
+                    if (null != callbackList)
+                    {
+                        const callbackListLen:uint = callbackList.length;
+                        for (var j:int = 0; j < callbackListLen; ++j)
+                        {
+                            var callback:Function = callbackList[j];
+                            if (null != callback)
+                                callback(protoIn);
+                        }
+                    }
+                }
+            }
         }
     }
 }

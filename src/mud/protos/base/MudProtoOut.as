@@ -1,6 +1,8 @@
-package commons.protos.base
+package mud.protos.base
 {
-    import commons.singleton.MudUtil;
+    import commons.protos.ProtoOutBase;
+    
+    import mud.MudUtil;
 
     /**
      * 发送到文字版mud服务器的协议对象
@@ -18,6 +20,11 @@ package commons.protos.base
             super();
             _head = head;
             _propList = new Vector.<Object>();
+        }
+        
+        override public function get head():*
+        {
+            return _head;
         }
         
         public function get dataStr():String
@@ -40,20 +47,34 @@ package commons.protos.base
             for (var i:int = 0; i < propListLen; ++i)
             {
                 var obj:Object = _propList[i];
-                content += parseToStr(obj);
+                content += MudUtil.encodeParamDelimiter(parseToStr(obj));
+                
+                if (i < propListLen-1)
+                    content += MudUtil.DataDelimiter;
             }
             
-            var sss:String = MudUtil.client2MudStr(content);
-            _data.writeUTFBytes(MudUtil.client2MudStr(content) + "\n");
+            _data.writeUTFBytes(MudUtil.encodeLineBreaks(content) + "\n");
         }
         
         
         
+        /**
+         * 准备属性列表
+         * <br/>子类根据协议的约定，指定好属性在列表中的顺序
+         */
         protected function readyPropList():void
         {
             _propList.length = 0;
         }
         
+        
+        
+        /**
+         * 将对象转换为字符串
+         * @param obj:Object
+         * @return String
+         * 
+         */
         private function parseToStr(obj:Object):String
         {
             var res:String = "";

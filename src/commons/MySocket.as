@@ -1,9 +1,11 @@
-package commons.singleton
+package commons
 {
     import flash.errors.IllegalOperationError;
     import flash.events.ProgressEvent;
     import flash.net.Socket;
     import flash.utils.ByteArray;
+    
+    import commons.debug.Debug;
     
     /**
      * 自定义socket
@@ -74,6 +76,7 @@ package commons.singleton
             readBytes(ba);
             
             var str:String = ba.toString();
+            Debug.log("收到服务端的原始数据：{0}", str);
             
             const callbackListLen:uint = _callbackList.length;
             for (var i:int = 0; i < callbackListLen; ++i)

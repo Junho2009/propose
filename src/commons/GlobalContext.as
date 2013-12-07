@@ -1,4 +1,4 @@
-package commons.singleton
+package commons
 {
     import flash.display.Sprite;
     import flash.display.Stage;
@@ -22,6 +22,8 @@ package commons.singleton
         private var _loaderContext:LoaderContext = null;
         
         private var _config:GlobalConfig = null;
+        
+        private var _bRecordLog:Boolean = false;
         
         
         public function GlobalContext()
@@ -74,6 +76,11 @@ package commons.singleton
         public function get config():GlobalConfig
         {
             return _config;
+        }
+        
+        public function get isRecordLog():Boolean
+        {
+            return _bRecordLog;
         }
     }
 }

@@ -6,18 +6,24 @@ package
     import flash.events.MouseEvent;
     import flash.net.Socket;
     
+    import mx.utils.StringUtil;
+    
     import commons.GlobalContext;
     import commons.MySocket;
+    import commons.WindowGlobalName;
     import commons.buses.NetBus;
     import commons.debug.Debug;
+    import commons.manager.IWindowManager;
     import commons.manager.base.ManagerGlobalName;
     import commons.manager.base.ManagerHub;
     import commons.module.ModuleManager;
     
+    import mud.BlessProtoIn;
     import mud.MudModule;
     import mud.protos.BlessProtoOut;
     import mud.protos.TestProtoIn;
-    import mud.protos.TestProtoOut;
+    
+    import ui.UIModule;
     
     import webgame.core.GlobalContext;
     import webgame.ui.GixButton;
@@ -74,6 +80,7 @@ package
             ManagerHub.getInstance().register(ManagerGlobalName.ModuleManager, moduleMgr);
             
             moduleMgr.addModule(new MudModule());
+            moduleMgr.addModule(new UIModule());
         }
         
         private function initSocket():void
@@ -89,10 +96,17 @@ package
         {
             NetBus.getInstance();
             
-            NetBus.getInstance().addCallback("12345", function(inc:TestProtoIn):void
+            //testing
+            NetBus.getInstance().addCallback(TestProtoIn.HEAD, function(inc:TestProtoIn):void
             {
                 Debug.log("收到{0}协议. name: {1}, value: {2}, msg: {3}"
                     , inc.head, inc.name, inc.value, inc.msg);
+            });
+            NetBus.getInstance().addCallback(BlessProtoIn.HEAD, function(inc:BlessProtoIn):void
+            {
+                var winMgr:IWindowManager = ManagerHub.getInstance().getManager(ManagerGlobalName.WindowManager) as IWindowManager;
+                winMgr.open(WindowGlobalName.MSG_BOX
+                    , StringUtil.substitute("{0}发来祝福：{1}", inc.authorName, inc.msg));
             });
         }
         
@@ -108,18 +122,25 @@ package
         {
             webgame.core.GlobalContext.init(this);
             
+            //testing
+            var winMgr:IWindowManager = ManagerHub.getInstance().getManager(ManagerGlobalName.WindowManager) as IWindowManager;
+            
             var btn:GixButton = new GixButton();
             btn.init();
             btn.width = 300;
             btn.height = 200;
             btn.addEventListener(MouseEvent.CLICK, function(e:MouseEvent):void
             {
-                var proto:BlessProtoOut = new BlessProtoOut();
+                /*var proto:BlessProtoOut = new BlessProtoOut();
                 proto.name = "俊壕、海霞的朋友";
                 proto.msg = "祝你们白头偕老，永远恩爱！";
-                NetBus.getInstance().send(proto);
+                NetBus.getInstance().send(proto);*/
+                
+                winMgr.open(WindowGlobalName.MSG_BOX, "测试测试");
             });
             addChild(btn);
+            
+            winMgr.open(WindowGlobalName.BLESS_SEND);
         }
         
         private function onClose(e:Event):void

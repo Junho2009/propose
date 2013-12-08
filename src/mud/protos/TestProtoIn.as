@@ -4,6 +4,8 @@ package mud.protos
     
     public class TestProtoIn extends MudProtoIn
     {
+        public static const HEAD:String = "12345";
+        
         private var _name:String;
         private var _value:uint;
         private var _msg:String;
@@ -11,7 +13,7 @@ package mud.protos
         
         public function TestProtoIn()
         {
-            super("12345");
+            super(HEAD);
         }
         
         public function get name():String

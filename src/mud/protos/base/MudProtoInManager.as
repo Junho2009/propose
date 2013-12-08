@@ -8,6 +8,7 @@ package mud.protos.base
     import commons.protos.ProtoInBase;
     import commons.protos.ProtoInList;
     
+    import mud.BlessProtoIn;
     import mud.MudUtil;
     import mud.protos.TestProtoIn;
     
@@ -31,7 +32,8 @@ package mud.protos.base
                 throw new IllegalOperationError("MudProtoInManager is a singleton class.");
             
             // 绑定输入协议
-            ProtoInList.getInstance().bind("12345", TestProtoIn);
+            ProtoInList.getInstance().bind(TestProtoIn.HEAD, TestProtoIn);
+            ProtoInList.getInstance().bind(BlessProtoIn.HEAD, BlessProtoIn);
         }
         
         /**

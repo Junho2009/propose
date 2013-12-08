@@ -16,5 +16,10 @@ package commons.manager.base
          * 输入协议的管理器
          */
         public static const ProtoInManager:String = "ManagerGlobalName.ProtoInManager";
+        
+        /**
+         * 窗体管理器
+         */
+        public static const WindowManager:String = "ManagerGlobalName.WindowManager";
     }
 }

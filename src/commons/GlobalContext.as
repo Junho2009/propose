@@ -73,6 +73,11 @@ package commons
         
         
         
+        public function get stage():Stage
+        {
+            return _stage;
+        }
+        
         public function get config():GlobalConfig
         {
             return _config;

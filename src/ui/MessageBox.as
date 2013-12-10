@@ -4,19 +4,11 @@ package ui
     import flash.events.Event;
     import flash.text.TextFormatAlign;
     
-    import commons.GlobalContext;
-    import commons.WindowGlobalName;
-    import commons.manager.IWindowManager;
-    import commons.manager.base.ManagerGlobalName;
-    import commons.manager.base.ManagerHub;
-    
     import webgame.ui.GixButton;
     import webgame.ui.GixText;
-    import webgame.ui.Window;
     
-    public class MessageBox extends Window implements IWindow
+    public class MessageBox extends WindowBase implements IWindow
     {
-        private var _winMgr:IWindowManager;
         private var _params:Object = null;
         
         private var _msg:GixText;
@@ -27,18 +19,14 @@ package ui
         {
             super("MessageBox", 400, 160);
             
-            _winMgr = ManagerHub.getInstance().getManager(ManagerGlobalName.WindowManager) as IWindowManager;
-            
             _msg = new GixText();
             _okBtn = new GixButton();
             
             addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
             addEventListener(Event.REMOVED_FROM_STAGE, onRemovedFromStage);
-            
-            init();
         }
         
-        public function set params(value:Object):void
+        override public function set params(value:Object):void
         {
             _params = value;
             
@@ -77,20 +65,15 @@ package ui
         
         private function onAddedToStage(e:Event):void
         {
-            _okBtn.callback = onClose;
+            _okBtn.callback = close;
             
-            x = GlobalContext.getInstance().stage.stageWidth - width >> 1;
-            y = GlobalContext.getInstance().stage.stageHeight - height >> 1;
+            x = _globalStage.stageWidth - width >> 1;
+            y = _globalStage.stageHeight - height >> 1;
         }
         
         private function onRemovedFromStage(e:Event):void
         {
             _okBtn.callback = null;
-        }
-        
-        private function onClose():void
-        {
-            _winMgr.close(WindowGlobalName.MSG_BOX);
         }
     }
 }

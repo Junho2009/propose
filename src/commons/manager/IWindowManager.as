@@ -1,5 +1,7 @@
 package commons.manager
 {
+    import flash.display.DisplayObject;
+    
     import commons.manager.base.IManager;
     
     /**
@@ -16,5 +18,7 @@ package commons.manager
         function open(name:String, params:Object = null):void;
         
         function close(name:String, params:Object = null):void;
+        
+        function closeByInstance(window:DisplayObject):void;
     }
 }

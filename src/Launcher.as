@@ -20,7 +20,6 @@ package
     
     import mud.BlessProtoIn;
     import mud.MudModule;
-    import mud.protos.BlessProtoOut;
     import mud.protos.TestProtoIn;
     
     import ui.UIModule;
@@ -67,11 +66,15 @@ package
         
         private function initLauncher():void
         {
-            commons.GlobalContext.init(this);
-            
+            initExternalModules();
             initModules();
             initSocket();
             initBuses();
+        }
+        
+        private function initExternalModules():void
+        {
+            commons.GlobalContext.init(this);
         }
         
         private function initModules():void
@@ -124,6 +127,8 @@ package
             
             //testing
             var winMgr:IWindowManager = ManagerHub.getInstance().getManager(ManagerGlobalName.WindowManager) as IWindowManager;
+            
+            winMgr.open(WindowGlobalName.HOME_PAGE);
             
             var btn:GixButton = new GixButton();
             btn.init();

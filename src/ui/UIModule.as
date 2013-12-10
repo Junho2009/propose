@@ -28,6 +28,7 @@ package ui
         {
             _winMgr.register(WindowGlobalName.MSG_BOX, MessageBox);
             _winMgr.register(WindowGlobalName.BLESS_SEND, BlessSendWin);
+            _winMgr.register(WindowGlobalName.HOME_PAGE, HomePageWin);
         }
     }
 }

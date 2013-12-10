@@ -1,7 +1,6 @@
 package commons.protos
 {
     import flash.errors.IllegalOperationError;
-    import flash.utils.ByteArray;
 
     /**
      * 输入协议对象基类

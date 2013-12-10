@@ -5,7 +5,6 @@ package ui
     import mx.utils.StringUtil;
     
     import commons.GlobalContext;
-    import commons.WindowGlobalName;
     import commons.buses.NetBus;
     import commons.manager.IWindowManager;
     import commons.manager.base.ManagerGlobalName;
@@ -15,11 +14,9 @@ package ui
     
     import webgame.ui.GixButton;
     import webgame.ui.GixInput;
-    import webgame.ui.Window;
     
-    public class BlessSendWin extends Window implements IWindow
+    public class BlessSendWin extends WindowBase implements IWindow
     {
-        private var _winMgr:IWindowManager;
         private var _params:Object = null;
         
         private var _content:GixInput;
@@ -30,8 +27,6 @@ package ui
         {
             super("BlessSendWin", 260, 280);
             
-            _winMgr = ManagerHub.getInstance().getManager(ManagerGlobalName.WindowManager) as IWindowManager;
-            
             _content = new GixInput();
             _sendBtn = new GixButton();
             
@@ -41,7 +36,7 @@ package ui
             init();
         }
         
-        public function set params(value:Object):void
+        override public function set params(value:Object):void
         {
         }
         
@@ -89,12 +84,7 @@ package ui
             cmd.msg = _content.text;
             NetBus.getInstance().send(cmd);
             
-            onClose();
-        }
-        
-        private function onClose():void
-        {
-            _winMgr.close(WindowGlobalName.BLESS_SEND);
+            close();
         }
     }
 }

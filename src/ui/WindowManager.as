@@ -1,6 +1,7 @@
 package ui
 {
     import flash.display.DisplayObject;
+    import flash.display.Sprite;
     import flash.errors.IllegalOperationError;
     import flash.utils.Dictionary;
     
@@ -17,6 +18,8 @@ package ui
         private var _winClassDic:Dictionary;
         private var _winDic:Dictionary;
         
+        private var _winLayer:Sprite;
+        
         
         public function WindowManager()
         {
@@ -25,6 +28,8 @@ package ui
             
             _winClassDic = new Dictionary();
             _winDic = new Dictionary();
+            
+            _winLayer = GlobalLayers.getInstance().windowLayer;
         }
         
         /**
@@ -65,22 +70,30 @@ package ui
             if (null == _winClassDic[name])
                 throw new IllegalOperationError(StringUtil.substitute("未注册的窗体：{0}", name));
             
-            var window:DisplayObject = _winDic[name];
-            if (null == window)
+            var iwindow:IWindow = null;
+            var dwindow:DisplayObject = _winDic[name];
+            if (null == dwindow)
             {
-                window = new _winClassDic[name]() as DisplayObject;
-                if (null == window)
+                dwindow = new _winClassDic[name]() as DisplayObject;
+                if (null == dwindow)
                     throw new IllegalOperationError(StringUtil.substitute("所注册的窗体类{0}不是可视对象", name));
-                if (!(window is IWindow))
+                if (!(dwindow is IWindow))
                     throw new IllegalOperationError(StringUtil.substitute("所注册的窗体类{0}没有实现IWindow接口", name));
                 
-                _winDic[name] = window;
+                _winDic[name] = dwindow;
+                
+                iwindow = dwindow as IWindow;
+                iwindow.init();
+            }
+            else
+            {
+                iwindow = dwindow as IWindow;
             }
             
-            GlobalLayers.getInstance().windowLayer.addChild(window);
+            _winLayer.addChild(dwindow);
             
             if (null != params)
-                (window as IWindow).params = params;
+                iwindow.params = params;
         }
         
         public function close(name:String, params:Object = null):void
@@ -88,9 +101,16 @@ package ui
             var window:DisplayObject = _winDic[name];
             if (null != window)
             {
-                if (GlobalLayers.getInstance().windowLayer.contains(window))
-                    GlobalLayers.getInstance().windowLayer.removeChild(window);
+                if (_winLayer.contains(window))
+                    _winLayer.removeChild(window);
             }
+        }
+        
+        public function closeByInstance(window:DisplayObject):void
+        {
+            const idx:int = _winLayer.getChildIndex(window);
+            if (idx >= 0)
+                _winLayer.removeChildAt(idx);
         }
     }
 }

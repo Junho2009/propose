@@ -4,6 +4,7 @@ package
     import flash.events.Event;
     import flash.events.IOErrorEvent;
     import flash.events.MouseEvent;
+    import flash.external.ExternalInterface;
     import flash.net.Socket;
     
     import mx.utils.StringUtil;
@@ -13,6 +14,8 @@ package
     import commons.WindowGlobalName;
     import commons.buses.NetBus;
     import commons.debug.Debug;
+    import commons.load.FilePath;
+    import commons.load.LoadManager;
     import commons.manager.IWindowManager;
     import commons.manager.base.ManagerGlobalName;
     import commons.manager.base.ManagerHub;
@@ -33,7 +36,7 @@ package
      * <br/>Create: 2013.07.07
      */
     [SWF(width = "1000", height = "600", frameRate = 30
-        , backgroundColor = "0x000000")]
+        , backgroundColor = "0x666666")]
     public class Launcher extends Sprite
     {
         private var _context:commons.GlobalContext = commons.GlobalContext.getInstance();
@@ -53,10 +56,26 @@ package
         
         private function initConfig():void
         {
-            //testing
-            _context.config.serverAddr = "127.0.0.1";
-            _context.config.serverPort = 8360;
-            //...
+            var hasExternalCfg:Boolean = false;
+            
+            if (ExternalInterface.available)
+            {
+                var cfgInfo:Object = ExternalInterface.call("config");
+                if (null != cfgInfo)
+                {
+                    _context.config.serverAddr = cfgInfo.ip;
+                    _context.config.serverPort = cfgInfo.port;
+                    
+                    hasExternalCfg = true;
+                }
+            }
+            
+            if (!hasExternalCfg)
+            {
+                FilePath.redirect("./res/");
+                _context.config.serverAddr = "127.0.0.1";
+                _context.config.serverPort = 8360;
+            }
         }
 
         private function onAddedToStage(e:Event):void
@@ -81,6 +100,9 @@ package
         {
             var moduleMgr:ModuleManager = new ModuleManager();
             ManagerHub.getInstance().register(ManagerGlobalName.ModuleManager, moduleMgr);
+            
+            var loadMgr:LoadManager = new LoadManager();
+            ManagerHub.getInstance().register(ManagerGlobalName.LoadManager, loadMgr);
             
             moduleMgr.addModule(new MudModule());
             moduleMgr.addModule(new UIModule());

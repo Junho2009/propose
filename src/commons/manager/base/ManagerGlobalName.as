@@ -13,6 +13,11 @@ package commons.manager.base
         public static const ModuleManager:String = "ManagerGlobalName.ModuleManager";
         
         /**
+         * 加载管理器
+         */        
+        public static const LoadManager:String = "ManagerGlobalName.LoadManager";
+        
+        /**
          * 输入协议的管理器
          */
         public static const ProtoInManager:String = "ManagerGlobalName.ProtoInManager";

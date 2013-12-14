@@ -78,6 +78,11 @@ package commons
             return _stage;
         }
         
+        public function get loaderContext():LoaderContext
+        {
+            return _loaderContext;
+        }
+        
         public function get config():GlobalConfig
         {
             return _config;

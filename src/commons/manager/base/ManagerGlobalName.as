@@ -8,6 +8,11 @@ package commons.manager.base
     public final class ManagerGlobalName
     {
         /**
+         * 定时器管理器
+         */
+        public static const TimerManager:String = "ManagerGlobalName.TimerManager";
+        
+        /**
          * 模块管理器
          */
         public static const ModuleManager:String = "ManagerGlobalName.ModuleManager";

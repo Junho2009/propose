@@ -6,6 +6,9 @@ package commons.load
     import mx.utils.StringUtil;
     
     import commons.debug.Debug;
+    import commons.manager.base.ManagerGlobalName;
+    import commons.manager.base.ManagerHub;
+    import commons.timer.ITimerManager;
 
     /**
      * 加载管理器
@@ -15,6 +18,10 @@ package commons.load
     public class LoadManager implements ILoadManager
     {
         private static const _MAX_MULTI_LOAD_NUM:uint = 5; // 最多同时进行的加载请求数
+        private static const _MAX_RETRY_TIMES:uint = 3; // 每个请求的最大重试次数
+        private static const _RETRY_READY_SEC:uint = 5; // 重试前的等待时间
+        
+        private var _tm:ITimerManager;
         
         private var _loaderPool:Vector.<MyLoader>;
         
@@ -22,12 +29,17 @@ package commons.load
         private var _runningLoaderDic:Dictionary; // 加载中的loaders
         private var _waitingReqList:Vector.<LoadRequestInfo>; // 等待中的加载请求列表
         
+        private var _waitingForRetryList:Vector.<LoadRetryInfo>; // 等待着重试的加载请求列表
+        private var _retryInfoDic:Dictionary; // 记录重试信息
+        
         private var _usingTokenDic:Dictionary; // 正在使用的加载请求token
         private var _freeTokenList:Vector.<String>; // 闲置的token列表
         
         
         public function LoadManager()
         {
+            _tm = ManagerHub.getInstance().getManager(ManagerGlobalName.TimerManager) as ITimerManager;
+            
             var i:int = 0;
             
             _loaderPool = new Vector.<MyLoader>();
@@ -39,8 +51,14 @@ package commons.load
             _reqListDic = new Dictionary();
             _runningLoaderDic = new Dictionary();
             _waitingReqList = new Vector.<LoadRequestInfo>();
+            
+            _waitingForRetryList = new Vector.<LoadRetryInfo>();
+            _retryInfoDic = new Dictionary();
+            
             _usingTokenDic = new Dictionary();
             _freeTokenList = new Vector.<String>();
+            
+            _tm.setTask(tickRetryCountDown, 1000, true);
         }
         
         public function isLoading(url:String):Boolean
@@ -177,6 +195,11 @@ package commons.load
         
         
         
+        private function hasFreeLoader():Boolean
+        {
+            return (_loaderPool.length > 0);
+        }
+        
         private function getSingleFileLoader():MyLoader
         {
             var loader:MyLoader = null;
@@ -245,7 +268,79 @@ package commons.load
         
         private function onLoadFailed_SingleFile(e:MyLoaderEvent):void
         {
-            //...
+            var trimUrl:String = FilePath.trimRoot(e.url);
+            
+            var i:int = 0;
+            var reqInfo:LoadRequestInfo = null;
+            var retryInfo:LoadRetryInfo = null;
+            var bRetry:Boolean = false;
+            
+            var reqList:Vector.<LoadRequestInfo> = _reqListDic[trimUrl] as Vector.<LoadRequestInfo>;
+            
+            const reqListLen:uint = reqList.length;
+            for (i = 0; i < reqListLen; ++i)
+            {
+                reqInfo = reqList[i];
+                
+                giveBackToken(reqInfo.token);
+                
+                if (reqInfo.isNeetToRetry)
+                {
+                    retryInfo = _retryInfoDic[reqInfo] as LoadRetryInfo;
+                    if (null == retryInfo)
+                    {
+                        retryInfo = new LoadRetryInfo();
+                        retryInfo.reqInfo = reqInfo;
+                        _retryInfoDic[reqInfo] = retryInfo;
+                        
+                        _waitingForRetryList.push(retryInfo);
+                        bRetry = true;
+                    }
+                    else
+                    {
+                        if (retryInfo.retriedTimes < _MAX_RETRY_TIMES)
+                        {
+                            retryInfo.readyTime = 0;
+                            _waitingForRetryList.push(retryInfo);
+                            bRetry = true;
+                        }
+                        else
+                        {
+                            retryInfo.dispose();
+                            
+                            _retryInfoDic[reqInfo] = null;
+                            delete _retryInfoDic[reqInfo];
+                        }
+                    }
+                }
+                
+                if (!bRetry)
+                {
+                    if (null != reqInfo.failCallback)
+                    {
+                        if (null == reqInfo.failCallbackData)
+                            reqInfo.failCallback.apply(this);
+                        else
+                            reqInfo.failCallback.apply(this, [reqInfo.failCallbackData]);
+                    }
+                    
+                    reqInfo.dispose();
+                }
+            }
+            
+            // 清空本url的加载请求列表
+            reqList.length = 0;
+            _reqListDic[trimUrl] = null;
+            delete _reqListDic[trimUrl];
+            
+            // 归还loader
+            var loader:MyLoader = _runningLoaderDic[trimUrl] as MyLoader;
+            loader.stopLoad();
+            _loaderPool.push(loader);
+            _runningLoaderDic[trimUrl] = null;
+            delete _runningLoaderDic[trimUrl];
+            
+            handleWaitingReqList();
         }
         
         private function onLoadProgress_SingleFile(e:MyLoaderEvent):void
@@ -298,7 +393,62 @@ package commons.load
         
         private function onLoadFailed_FileInList(e:MyLoaderEvent):void
         {
-            //...
+            var reqInfo:LoadRequestInfo = e.param as LoadRequestInfo;
+            
+            giveBackToken(reqInfo.token);
+            
+            // 归还loader
+            var loader:MyLoader = _runningLoaderDic[reqInfo] as MyLoader;
+            _loaderPool.push(loader);
+            _runningLoaderDic[reqInfo] = null;
+            delete _runningLoaderDic[reqInfo];
+            
+            var retryInfo:LoadRetryInfo = null;
+            var bRetry:Boolean = false;
+            if (reqInfo.isNeetToRetry)
+            {
+                retryInfo = _retryInfoDic[reqInfo] as LoadRetryInfo;
+                if (null == retryInfo)
+                {
+                    retryInfo = new LoadRetryInfo();
+                    retryInfo.reqInfo = reqInfo;
+                    _retryInfoDic[reqInfo] = retryInfo;
+                    
+                    _waitingForRetryList.push(retryInfo);
+                    bRetry = true;
+                }
+                else
+                {
+                    if (retryInfo.retriedTimes < _MAX_RETRY_TIMES)
+                    {
+                        retryInfo.readyTime = 0;
+                        _waitingForRetryList.push(retryInfo);
+                        bRetry = true;
+                    }
+                    else
+                    {
+                        retryInfo.dispose();
+                        
+                        _retryInfoDic[reqInfo] = null;
+                        delete _retryInfoDic[reqInfo];
+                    }
+                }
+            }
+            
+            if (!bRetry)
+            {
+                if (null != reqInfo.failCallback)
+                {
+                    if (null == reqInfo.failCallbackData)
+                        reqInfo.failCallback.apply(this);
+                    else
+                        reqInfo.failCallback.apply(this, [reqInfo.failCallbackData]);
+                }
+                
+                reqInfo.dispose();
+            }
+            
+            handleWaitingReqList();
         }
         
         private function onLoadProgress_FileInList(e:MyLoaderEvent):void
@@ -336,7 +486,7 @@ package commons.load
         
         private function handleWaitingReqList():void
         {
-            if (_waitingReqList.length > 0)
+            if (_waitingReqList.length > 0 && hasFreeLoader())
             {
                 var reqInfo:LoadRequestInfo = null;
                 
@@ -393,6 +543,36 @@ package commons.load
             {
                 _waitingReqList.push(reqInfo);
             }
+        }
+        
+        private function tickRetryCountDown():void
+        {
+            var retryInfo:LoadRetryInfo = null;
+            var timeUpIdxList:Vector.<int> = new Vector.<int>();
+            var i:int = 0;
+            
+            const waitingForRetryListLen:uint = _waitingForRetryList.length;
+            for (i = 0; i < waitingForRetryListLen; ++i)
+            {
+                retryInfo = _waitingForRetryList[i];
+                if (++retryInfo.readyTime > _RETRY_READY_SEC)
+                {
+                    _waitingReqList.push(retryInfo.reqInfo);
+                    timeUpIdxList.push(i);
+                    
+                    ++retryInfo.retriedTimes;
+                    
+                    Debug.log("准备第{0}次重试加载：{1}", retryInfo.retriedTimes, retryInfo.reqInfo.url);
+                }
+            }
+            
+            for (i = timeUpIdxList.length-1; i >= 0; --i)
+            {
+                _waitingForRetryList.splice(timeUpIdxList[i], 1);
+            }
+            
+            if (timeUpIdxList.length > 0)
+                handleWaitingReqList();
         }
     }
 }

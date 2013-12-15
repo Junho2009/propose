@@ -168,12 +168,14 @@ package commons.load
         {
             _bUrlLoading = false;
             Debug.log("URL加载发生IO错误，url：{0}", _url);
+            dispatchEvent(new MyLoaderEvent(MyLoaderEvent.FAILED, _url, _loader.content, _param));
         }
         
         private function onUrlSecurityError(e:SecurityErrorEvent):void
         {
             _bUrlLoading = false;
             Debug.log("URL加载发生安全错误，url：{0}", _url);
+            dispatchEvent(new MyLoaderEvent(MyLoaderEvent.FAILED, _url, _loader.content, _param));
         }
         
         
@@ -188,12 +190,14 @@ package commons.load
         {
             _loaderLoading = false;
             Debug.log("显示对象加载发生IO错误，url：{0}", _url);
+            dispatchEvent(new MyLoaderEvent(MyLoaderEvent.FAILED, _url, _loader.content, _param));
         }
         
         private function onDisplayObjLoadSecurityError(e:SecurityErrorEvent):void
         {
             _loaderLoading = false;
             Debug.log("显示对象加载发生安全错误，url：{0}", _url);
+            dispatchEvent(new MyLoaderEvent(MyLoaderEvent.FAILED, _url, _loader.content, _param));
         }
     }
 }

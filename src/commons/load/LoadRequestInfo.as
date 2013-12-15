@@ -29,6 +29,8 @@ package commons.load
         public var failCallbackData:Object = null;
         public var singleCompCallback:Function = null;
         
+        public var isNeetToRetry:Boolean = true;
+        
         
         
         /**

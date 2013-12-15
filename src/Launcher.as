@@ -20,6 +20,7 @@ package
     import commons.manager.base.ManagerGlobalName;
     import commons.manager.base.ManagerHub;
     import commons.module.ModuleManager;
+    import commons.timer.TimerManager;
     
     import mud.BlessProtoIn;
     import mud.MudModule;
@@ -98,6 +99,9 @@ package
         
         private function initModules():void
         {
+            var timerMgr:TimerManager = new TimerManager();
+            ManagerHub.getInstance().register(ManagerGlobalName.TimerManager, timerMgr);
+            
             var moduleMgr:ModuleManager = new ModuleManager();
             ManagerHub.getInstance().register(ManagerGlobalName.ModuleManager, moduleMgr);
             

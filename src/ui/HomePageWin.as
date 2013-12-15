@@ -72,11 +72,13 @@ package ui
                     img.x = data.x;
                     img.y = data.y;
                     addChild(img);
-                }
+                };
+                loadReqInfo.failCallbackData = {url: urlList[i]};
+                loadReqInfo.failCallback = function(data:Object):void
+                {
+                    Debug.log("文件加载失败：{0}", data.url);
+                };
                 _loadMgr.load(loadReqInfo);
-                
-                if (i == 5 || i == 7)
-                    _loadMgr.stopLoad(loadReqInfo.token);
             }
             
             var listReqInfo:LoadRequestInfo = new LoadRequestInfo();

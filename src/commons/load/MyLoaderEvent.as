@@ -27,13 +27,15 @@ package commons.load
         
         private var _url:String;
         private var _data:Object;
+        private var _param:Object;
         
         
-        public function MyLoaderEvent(type:String, url:String, data:Object = null)
+        public function MyLoaderEvent(type:String, url:String, data:Object = null, param:Object = null)
         {
             super(type);
             _url = url;
             _data = data;
+            _param = param;
         }
         
         public function get url():String
@@ -44,6 +46,11 @@ package commons.load
         public function get data():Object
         {
             return _data;
+        }
+        
+        public function get param():Object
+        {
+            return _param;
         }
     }
 }

@@ -18,14 +18,18 @@ package commons.load
         /**
          * 请求加载多个文件时使用的url列表
          */        
-        public var urlList:Vector.<String> = null;
+        private var _urlList:Vector.<String> = null;
+        private var _totalFileNum:uint = 0;
         
         public var token:String = "";
         
-        public var callback:Function = null;
-        public var callbackData:Object = null;
+        public var completedCallback:Function = null;
+        public var completedCallbackData:Object = null;
         public var failCallback:Function = null;
         public var failCallbackData:Object = null;
+        public var singleCompCallback:Function = null;
+        
+        
         
         /**
          * 请求单个文件时使用的url（去除了根路径）
@@ -42,21 +46,40 @@ package commons.load
             return _trimUrl;
         }
         
+        public function set urlList(value:Vector.<String>):void
+        {
+            if (null == value || 0 == value.length)
+                throw new IllegalOperationError("指定的加载列表为空");
+            
+            _urlList = value;
+            _totalFileNum = value.length;
+        }
+        
+        public function get urlList():Vector.<String>
+        {
+            return _urlList;
+        }
+        
+        public function get totalFileNum():uint
+        {
+            return _totalFileNum;
+        }
+        
         public function dispose():void
         {
             url = "";
             _trimUrl = "";
             
-            if (null != urlList)
+            if (null != _urlList)
             {
-                urlList.length = 0;
-                urlList = null;
+                _urlList.length = 0;
+                _urlList = null;
             }
             
             token = "";
             
-            callback = null;
-            callbackData = null;
+            completedCallback = null;
+            completedCallbackData = null;
             failCallback = null;
             failCallbackData = null;
         }

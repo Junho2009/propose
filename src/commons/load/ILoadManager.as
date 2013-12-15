@@ -15,7 +15,7 @@ package commons.load
         
         function stopLoad(token:String):void;
         
-        function isLoadingList(urlList:Array):void;
+        function isLoadingList(reqInfo:LoadRequestInfo):Boolean;
         
         function loadList(reqInfo:LoadRequestInfo):void;
         

@@ -28,11 +28,13 @@ package commons.load
         private var _bUrlLoading:Boolean = false;
         
         private var _loader:Loader;
+        private var _loaderLoading:Boolean = false;
         
         private var _listenerDic:Dictionary;
         
         private var _url:String;
         private var _fileType:String;
+        private var _param:Object;
         
         
         public function MyLoader()
@@ -55,10 +57,11 @@ package commons.load
             _listenerDic = new Dictionary();
         }
         
-        public function load(url:String):void
+        public function load(url:String, param:Object = null):void
         {
             _url = url;
             _fileType = FileType.getFileType(url);
+            _param = param;
             
             switch (_fileType)
             {
@@ -82,15 +85,29 @@ package commons.load
         public function stopLoad():void
         {
             if (_bUrlLoading)
+            {
                 _urlLoader.close();
+                _bUrlLoading = false;
+            }
+            
+            if (_loaderLoading)
+            {
+                _loader.close();
+                _loaderLoading = false;
+            }
         }
         
-        public function dispose():void
+        public function removeListeners():void
         {
             for (var key:* in _listenerDic)
             {
                 removeEventListener(String(key), _listenerDic[key] as Function);
             }
+        }
+        
+        public function dispose():void
+        {
+            removeListeners();
             _listenerDic = null;
             
             stopLoad();
@@ -124,7 +141,7 @@ package commons.load
                 var progInfo:Object = new Object();
                 progInfo.bytesLoaded = e.bytesLoaded;
                 progInfo.bytesTotal = e.bytesTotal;
-                dispatchEvent(new MyLoaderEvent(MyLoaderEvent.PROGRESS, _url, progInfo));
+                dispatchEvent(new MyLoaderEvent(MyLoaderEvent.PROGRESS, _url, progInfo, _param));
             }
         }
         
@@ -137,11 +154,12 @@ package commons.load
                 case FileType.PNG:
                 case FileType.JPG:
                 case FileType.SWF:
+                    _loaderLoading = true
                     _loader.loadBytes(_urlLoader.data, GlobalContext.getInstance().loaderContext);
                     break;
                 
                 default:
-                    dispatchEvent(new MyLoaderEvent(MyLoaderEvent.COMPLETE, _url, _urlLoader.data));
+                    dispatchEvent(new MyLoaderEvent(MyLoaderEvent.COMPLETE, _url, _urlLoader.data, _param));
                     break;
             }
         }
@@ -162,16 +180,19 @@ package commons.load
         
         private function onDisplayObjLoadCompleted(e:Event):void
         {
-            dispatchEvent(new MyLoaderEvent(MyLoaderEvent.COMPLETE, _url, _loader.content));
+            _loaderLoading = false;
+            dispatchEvent(new MyLoaderEvent(MyLoaderEvent.COMPLETE, _url, _loader.content, _param));
         }
         
         private function onDisplayObjLoadIOError(e:IOErrorEvent):void
         {
+            _loaderLoading = false;
             Debug.log("显示对象加载发生IO错误，url：{0}", _url);
         }
         
         private function onDisplayObjLoadSecurityError(e:SecurityErrorEvent):void
         {
+            _loaderLoading = false;
             Debug.log("显示对象加载发生安全错误，url：{0}", _url);
         }
     }

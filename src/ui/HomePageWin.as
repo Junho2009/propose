@@ -3,6 +3,7 @@ package ui
     import flash.display.Bitmap;
     import flash.display.Shape;
     
+    import commons.debug.Debug;
     import commons.load.FilePath;
     import commons.load.ILoadManager;
     import commons.load.LoadRequestInfo;
@@ -37,7 +38,7 @@ package ui
             
             var loadReqInfo:LoadRequestInfo = new LoadRequestInfo();
             loadReqInfo.url = FilePath.root + "homepage_bg.jpg";
-            loadReqInfo.callback = function(img:Bitmap):void
+            loadReqInfo.completedCallback = function(img:Bitmap):void
             {
                 backgroundImage = img;
             };
@@ -64,15 +65,47 @@ package ui
             {
                 var loadReqInfo:LoadRequestInfo = new LoadRequestInfo();
                 loadReqInfo.url = urlList[i];
-                loadReqInfo.callbackData = {x: (i%5)*40, y: uint(i/5)*40};
-                loadReqInfo.callback = function(img:Bitmap, data:Object):void
+                loadReqInfo.completedCallbackData = {url: urlList[i], x: (i%5)*40, y: uint(i/5)*40};
+                loadReqInfo.completedCallback = function(img:Bitmap, data:Object):void
                 {
+                    Debug.log("文件加载完毕：{0}", data.url);
                     img.x = data.x;
                     img.y = data.y;
                     addChild(img);
                 }
                 _loadMgr.load(loadReqInfo);
+                
+                if (i == 5 || i == 7)
+                    _loadMgr.stopLoad(loadReqInfo.token);
             }
+            
+            var listReqInfo:LoadRequestInfo = new LoadRequestInfo();
+            var urlList2:Vector.<String> = new Vector.<String>();
+            urlList2.push(FilePath.root + "icon/31100.png");
+            urlList2.push(FilePath.root + "icon/31101.png");
+            urlList2.push(FilePath.root + "icon/31102.png");
+            urlList2.push(FilePath.root + "icon/31103.png");
+            urlList2.push(FilePath.root + "icon/31104.png");
+            urlList2.push(FilePath.root + "icon/31105.png");
+            urlList2.push(FilePath.root + "icon/31106.png");
+            urlList2.push(FilePath.root + "icon/31107.png");
+            urlList2.push(FilePath.root + "icon/31108.png");
+            urlList2.push(FilePath.root + "icon/31109.png");
+            listReqInfo.urlList = urlList2;
+            listReqInfo.completedCallback = function():void
+            {
+                Debug.log("文件列表我都加载完毕了！");
+            };
+            listReqInfo.singleCompCallback = function(url:String, data:Object):void
+            {
+                Debug.log("单个文件加载完毕：{0}", url);
+                
+                if (++_count > 5)
+                    _loadMgr.stopLoadList(listReqInfo.token);
+            };
+            _loadMgr.loadList(listReqInfo);
         }
+        
+        private var _count:uint = 0;
     }
 }

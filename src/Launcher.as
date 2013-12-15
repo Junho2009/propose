@@ -20,11 +20,14 @@ package
     import commons.manager.base.ManagerGlobalName;
     import commons.manager.base.ManagerHub;
     import commons.module.ModuleManager;
+    import commons.sound.ISoundManager;
     import commons.timer.TimerManager;
     
     import mud.BlessProtoIn;
     import mud.MudModule;
     import mud.protos.TestProtoIn;
+    
+    import sound.SoundModule;
     
     import ui.UIModule;
     
@@ -64,6 +67,7 @@ package
                 var cfgInfo:Object = ExternalInterface.call("config");
                 if (null != cfgInfo)
                 {
+                    FilePath.redirect(cfgInfo.root_path);
                     _context.config.serverAddr = cfgInfo.ip;
                     _context.config.serverPort = cfgInfo.port;
                     
@@ -110,6 +114,11 @@ package
             
             moduleMgr.addModule(new MudModule());
             moduleMgr.addModule(new UIModule());
+            moduleMgr.addModule(new SoundModule());
+            
+            //testing
+            var soundMgr:ISoundManager = ManagerHub.getInstance().getManager(ManagerGlobalName.SoundManager) as ISoundManager;
+            soundMgr.play(FilePath.root+"music/1.mp3", true);
         }
         
         private function initSocket():void

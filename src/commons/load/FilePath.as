@@ -1,5 +1,8 @@
 package commons.load
 {
+    import commons.GlobalContext;
+    import commons.ScreenResolutionLV;
+
     /**
      * 文件路径定义
      * @author junho
@@ -10,10 +13,6 @@ package commons.load
         private static var _root:String = "./";
         
         
-        public static function get root():String
-        {
-            return _root;
-        }
         
         public static function redirect(root:String):void
         {
@@ -23,6 +22,30 @@ package commons.load
         public static function trimRoot(url:String):String
         {
             return url.replace(root, "");
+        }
+        
+        
+        
+        public static function get root():String
+        {
+            return _root;
+        }
+        
+        public static function get adapt():String
+        {
+            const screenResolutionLV:uint = GlobalContext.getInstance().screenResolutionLV;
+            switch (screenResolutionLV)
+            {
+                case ScreenResolutionLV.LOW:
+                    return root+"adapt/low/";
+                case ScreenResolutionLV.MID:
+                    return root+"adapt/mid/";
+                case ScreenResolutionLV.HIGH:
+                    return root+"adapt/high/";
+                
+                default:
+                    return root+"adapt/low/";
+            }
         }
     }
 }

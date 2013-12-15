@@ -31,5 +31,10 @@ package commons.manager.base
          * 窗体管理器
          */
         public static const WindowManager:String = "ManagerGlobalName.WindowManager";
+        
+        /**
+         * 声音管理器
+         */
+        public static const SoundManager:String = "ManagerGlobalName.SoundManager";
     }
 }

@@ -2,6 +2,9 @@ package commons
 {
     import flash.display.Sprite;
     import flash.display.Stage;
+    import flash.display.StageAlign;
+    import flash.display.StageQuality;
+    import flash.display.StageScaleMode;
     import flash.errors.IllegalOperationError;
     import flash.system.ApplicationDomain;
     import flash.system.LoaderContext;
@@ -24,6 +27,8 @@ package commons
         private var _config:GlobalConfig = null;
         
         private var _bRecordLog:Boolean = false;
+        
+        private var _screenResolutionLV:uint = ScreenResolutionLV.LOW;
         
         
         public function GlobalContext()
@@ -63,6 +68,12 @@ package commons
                 context._stage = root.stage;
                 context._loaderContext = new LoaderContext(false, ApplicationDomain.currentDomain);
                 
+                context._stage.align = StageAlign.TOP_LEFT;
+                context._stage.scaleMode = StageScaleMode.NO_SCALE;
+                context._stage.quality = StageQuality.HIGH;
+                
+                context.initScreenResolutionLV();
+                
                 _bSetRoot = true;
             }
             else
@@ -91,6 +102,24 @@ package commons
         public function get isRecordLog():Boolean
         {
             return _bRecordLog;
+        }
+        
+        public function get screenResolutionLV():uint
+        {
+            return _screenResolutionLV;
+        }
+        
+        
+        
+        private function initScreenResolutionLV():void
+        {
+            const stageH:Number = stage.stageHeight;
+            if (stageH <= 600)
+                _screenResolutionLV = ScreenResolutionLV.LOW;
+            else if (stageH <= 700)
+                _screenResolutionLV = ScreenResolutionLV.MID;
+            else
+                _screenResolutionLV = ScreenResolutionLV.HIGH;
         }
     }
 }

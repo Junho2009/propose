@@ -11,13 +11,13 @@ package commons.load
     {
         function isLoading(url:String):Boolean;
         
-        function load(url:String, info:LoadRequestInfo):void;
+        function load(reqInfo:LoadRequestInfo):void;
         
         function stopLoad(token:String):void;
         
         function isLoadingList(urlList:Array):void;
         
-        function loadList(urlList:Array, info:LoadRequestInfo):void;
+        function loadList(reqInfo:LoadRequestInfo):void;
         
         function stopLoadList(token:String):void;
     }

@@ -11,9 +11,6 @@ package ui
 
     public class HomePageWin extends WindowBase
     {
-        [Embed(source = "../../../resources/homepage_bg.jpg")]
-        private var bg:Class;
-        
         private var _loadMgr:ILoadManager;
         
         
@@ -39,11 +36,43 @@ package ui
             fullscreen = true;
             
             var loadReqInfo:LoadRequestInfo = new LoadRequestInfo();
+            loadReqInfo.url = FilePath.root + "homepage_bg.jpg";
             loadReqInfo.callback = function(img:Bitmap):void
             {
                 backgroundImage = img;
             };
-            _loadMgr.load(FilePath.root + "homepage_bg.jpg", loadReqInfo);
+            _loadMgr.load(loadReqInfo);
+            
+            testLoad();
+        }
+        
+        private function testLoad():void
+        {
+            var urlList:Vector.<String> = new Vector.<String>();
+            urlList.push(FilePath.root + "icon/31012.png");
+            urlList.push(FilePath.root + "icon/31013.png");
+            urlList.push(FilePath.root + "icon/31014.png");
+            urlList.push(FilePath.root + "icon/31015.png");
+            urlList.push(FilePath.root + "icon/31016.png");
+            urlList.push(FilePath.root + "icon/31017.png");
+            urlList.push(FilePath.root + "icon/31018.png");
+            urlList.push(FilePath.root + "icon/31019.png");
+            urlList.push(FilePath.root + "icon/31020.png");
+            
+            const urlListLen:uint = urlList.length;
+            for (var i:int = 0; i < urlListLen; ++i)
+            {
+                var loadReqInfo:LoadRequestInfo = new LoadRequestInfo();
+                loadReqInfo.url = urlList[i];
+                loadReqInfo.callbackData = {x: (i%5)*40, y: uint(i/5)*40};
+                loadReqInfo.callback = function(img:Bitmap, data:Object):void
+                {
+                    img.x = data.x;
+                    img.y = data.y;
+                    addChild(img);
+                }
+                _loadMgr.load(loadReqInfo);
+            }
         }
     }
 }

@@ -1,6 +1,5 @@
 package mud.protos.base
 {
-    import flash.errors.IllegalOperationError;
     import flash.utils.ByteArray;
     
     import commons.debug.Debug;
@@ -19,38 +18,15 @@ package mud.protos.base
      */
     public class MudProtoInManager implements IProtoInManager
     {
-        private static var _allowInstance:Boolean = false;
-        private static var _instance:MudProtoInManager = null;
-        
         private var _bFirstRecv:Boolean = true;
         
         
         
         public function MudProtoInManager()
         {
-            if(!_allowInstance)
-                throw new IllegalOperationError("MudProtoInManager is a singleton class.");
-            
             // 绑定输入协议
             ProtoInList.getInstance().bind(TestProtoIn.HEAD, TestProtoIn);
             ProtoInList.getInstance().bind(BlessProtoIn.HEAD, BlessProtoIn);
-        }
-        
-        /**
-         * 获取当前实例 
-         * @return MudProtoInManager
-         * 
-         */	
-        public static function getInstance():MudProtoInManager
-        {
-            if(null == _instance)
-            {
-                _allowInstance = true;
-                _instance = new MudProtoInManager();
-                _allowInstance = false;
-            }
-            
-            return _instance;
         }
         
         

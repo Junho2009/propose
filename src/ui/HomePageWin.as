@@ -73,7 +73,7 @@ package ui
             Tweener.addTween(_bg, params);
             
             adjustBG();
-            addChild(_bg);
+//            addChild(_bg);
         }
         
         private function onStageResize():void

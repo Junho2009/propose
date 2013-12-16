@@ -5,7 +5,7 @@ package commons.load
      * @author junho
      * <br>Create: 2013.12.15
      */    
-    public class LoadRetryInfo
+    internal class LoadRetryInfo
     {
         public var retriedTimes:uint = 0; // 已重试次数
         public var readyTime:uint = 0; // 已等待重试的时间

@@ -12,7 +12,7 @@ package ui
         
         public function UIModule()
         {
-            _winMgr = WindowManager.getInstance();
+            _winMgr = new WindowManager();
             ManagerHub.getInstance().register(ManagerGlobalName.WindowManager
                 , _winMgr);
             

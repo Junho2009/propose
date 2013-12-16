@@ -12,9 +12,6 @@ package ui
     
     public class WindowManager implements IWindowManager
     {
-        private static var _allowInstance:Boolean = false;
-        private static var _instance:WindowManager = null;
-        
         private var _winClassDic:Dictionary;
         private var _winDic:Dictionary;
         
@@ -23,30 +20,10 @@ package ui
         
         public function WindowManager()
         {
-            if(!_allowInstance)
-                throw new IllegalOperationError("WindowManager is a singleton class.");
-            
             _winClassDic = new Dictionary();
             _winDic = new Dictionary();
             
             _winLayer = GlobalLayers.getInstance().windowLayer;
-        }
-        
-        /**
-         * 获取当前实例 
-         * @return GlobalContext
-         * 
-         */	
-        public static function getInstance():WindowManager
-        {
-            if(null == _instance)
-            {
-                _allowInstance = true;
-                _instance = new WindowManager();
-                _allowInstance = false;
-            }
-            
-            return _instance;
         }
         
         

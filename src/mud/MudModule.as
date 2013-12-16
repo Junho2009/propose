@@ -16,7 +16,7 @@ package mud
         public function MudModule()
         {
             ManagerHub.getInstance().register(ManagerGlobalName.ProtoInManager
-                , MudProtoInManager.getInstance());
+                , new MudProtoInManager());
         }
         
         public function get name():String

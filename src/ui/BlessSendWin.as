@@ -6,9 +6,6 @@ package ui
     
     import commons.GlobalContext;
     import commons.buses.NetBus;
-    import commons.manager.IWindowManager;
-    import commons.manager.base.ManagerGlobalName;
-    import commons.manager.base.ManagerHub;
     
     import mud.protos.BlessProtoOut;
     
@@ -29,9 +26,6 @@ package ui
             
             _content = new GixInput();
             _sendBtn = new GixButton();
-            
-            addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
-            addEventListener(Event.REMOVED_FROM_STAGE, onRemovedFromStage);
             
             init();
         }
@@ -64,7 +58,7 @@ package ui
         
         
         
-        private function onAddedToStage(e:Event):void
+        override protected function onWindowOpened(e:Event):void
         {
             _sendBtn.callback = onSend;
             
@@ -72,13 +66,16 @@ package ui
             y = GlobalContext.getInstance().stage.stageHeight - height >> 1;
         }
         
-        private function onRemovedFromStage(e:Event):void
+        override protected function onWindowClosed(e:Event):void
         {
             _sendBtn.callback = null;
         }
         
         private function onSend():void
         {
+            if ("" == _content.text)
+                return;
+            
             var cmd:BlessProtoOut = new BlessProtoOut();
             cmd.name = StringUtil.substitute("friend{0}", Math.random());
             cmd.msg = _content.text;

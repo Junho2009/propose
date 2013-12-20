@@ -1,6 +1,7 @@
 package commons.manager
 {
     import flash.display.DisplayObject;
+    import flash.geom.Point;
     
     import commons.manager.base.IManager;
     
@@ -15,7 +16,7 @@ package commons.manager
         
         function unregister(name:String):void;
         
-        function open(name:String, params:Object = null):void;
+        function open(name:String, pos:Point = null, params:Object = null):void;
         
         function close(name:String, params:Object = null):void;
         

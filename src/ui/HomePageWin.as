@@ -1,24 +1,29 @@
 package ui
 {
     import flash.display.Bitmap;
-    import flash.display.Shape;
     import flash.display.Sprite;
     import flash.events.Event;
     
     import caurina.transitions.Tweener;
     
     import commons.GlobalContext;
+    import commons.WindowGlobalName;
     import commons.load.FilePath;
     import commons.load.ILoadManager;
     import commons.load.LoadRequestInfo;
     import commons.manager.base.ManagerGlobalName;
     import commons.manager.base.ManagerHub;
 
+    /**
+     * 主页
+     * @author junho
+     * <br/>Create: 2013.12.08
+     */    
     public class HomePageWin extends WindowBase
     {
         private var _loadMgr:ILoadManager;
         
-        private var _bg:Bitmap;
+        private var _pic:Bitmap;
         
         
         public function HomePageWin()
@@ -42,7 +47,7 @@ package ui
             
             var reqInfo:LoadRequestInfo = new LoadRequestInfo();
             reqInfo.url = FilePath.adapt+"homepage_bg.jpg";
-            reqInfo.completedCallback = onBGLoaded;
+            reqInfo.completedCallback = onPicLoaded;
             _loadMgr.load(reqInfo);
         }
         
@@ -51,6 +56,8 @@ package ui
         override protected function onWindowOpened(e:Event):void
         {
             GlobalContext.getInstance().stage.addEventListener(Event.RESIZE, onStageResize);
+            
+            _winMgr.open(WindowGlobalName.BLESS_SEND);
         }
         
         override protected function onWindowClosed(e:Event):void
@@ -60,31 +67,31 @@ package ui
         
         
         
-        private function onBGLoaded(img:Bitmap):void
+        private function onPicLoaded(img:Bitmap):void
         {
-            _bg = img;
+            _pic = img;
             
             var params:Object = new Object();
             params.time = 3;
             params.alpha = 1;
             params.transition = "linear";
             
-            _bg.alpha = 0;
-            Tweener.addTween(_bg, params);
+            _pic.alpha = 0;
+            Tweener.addTween(_pic, params);
             
-            adjustBG();
-//            addChild(_bg);
+            adjustPic();
+            addChild(_pic);
         }
         
-        private function onStageResize():void
+        override protected function onStageResize(e:Event):void
         {
-            adjustBG();
+            adjustPic();
         }
         
-        private function adjustBG():void
+        private function adjustPic():void
         {
-            _bg.x = GlobalContext.getInstance().stage.stageWidth - _bg.width >> 1;
-            _bg.y = GlobalContext.getInstance().stage.stageHeight - _bg.height >> 1;
+            _pic.x = GlobalContext.getInstance().stage.stageWidth - _pic.width >> 1;
+            _pic.y = GlobalContext.getInstance().stage.stageHeight - _pic.height >> 1;
         }
     }
 }

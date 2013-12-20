@@ -2,6 +2,7 @@ package ui
 {
     import flash.display.Stage;
     import flash.events.Event;
+    import flash.events.MouseEvent;
     
     import commons.GlobalContext;
     import commons.manager.IWindowManager;
@@ -31,6 +32,8 @@ package ui
             
             addEventListener(Event.ADDED_TO_STAGE, onWindowOpened);
             addEventListener(Event.REMOVED_FROM_STAGE, onWindowClosed);
+            
+            GlobalContext.getInstance().stage.addEventListener(Event.RESIZE, onStageResize);
         }
         
         public function set params(value:Object):void
@@ -49,9 +52,20 @@ package ui
             //...
         }
         
-        protected function close():void
+        protected function onStageResize(e:Event):void
+        {
+            //...
+        }
+        
+        protected function close(e:MouseEvent = null):void
         {
             _winMgr.closeByInstance(this);
+        }
+        
+        protected function alignCenter(e:MouseEvent = null):void
+        {
+            x = GlobalContext.getInstance().stage.stageWidth - width >> 1;
+            y = GlobalContext.getInstance().stage.stageHeight - height >> 1;
         }
     }
 }

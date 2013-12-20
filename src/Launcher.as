@@ -116,9 +116,9 @@ package
             moduleMgr.addModule(new UIModule());
             moduleMgr.addModule(new SoundModule());
             
-            //testing
-            var soundMgr:ISoundManager = ManagerHub.getInstance().getManager(ManagerGlobalName.SoundManager) as ISoundManager;
-            soundMgr.play(FilePath.root+"music/1.mp3", true);
+//            //testing
+//            var soundMgr:ISoundManager = ManagerHub.getInstance().getManager(ManagerGlobalName.SoundManager) as ISoundManager;
+//            soundMgr.play(FilePath.root+"music/1.mp3", true);
         }
         
         private function initSocket():void
@@ -143,7 +143,7 @@ package
             NetBus.getInstance().addCallback(BlessProtoIn.HEAD, function(inc:BlessProtoIn):void
             {
                 var winMgr:IWindowManager = ManagerHub.getInstance().getManager(ManagerGlobalName.WindowManager) as IWindowManager;
-                winMgr.open(WindowGlobalName.MSG_BOX
+                winMgr.open(WindowGlobalName.MSG_BOX, null
                     , StringUtil.substitute("{0}发来祝福：{1}", inc.authorName, inc.msg));
             });
         }
@@ -176,11 +176,9 @@ package
                 proto.msg = "祝你们白头偕老，永远恩爱！";
                 NetBus.getInstance().send(proto);*/
                 
-                winMgr.open(WindowGlobalName.MSG_BOX, "测试测试");
+                winMgr.open(WindowGlobalName.MSG_BOX, null, "测试测试");
             });
             addChild(btn);
-            
-            winMgr.open(WindowGlobalName.BLESS_SEND);
         }
         
         private function onClose(e:Event):void

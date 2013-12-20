@@ -1,6 +1,9 @@
-.actionScriptProperties
-.project
-.settings/
 bin/
 html-template/
 lib/
+script/
+.actionScriptProperties
+.project
+.settings/
+*.sh
+sdk

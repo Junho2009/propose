@@ -3,7 +3,7 @@ package sound
     import flash.media.Sound;
     import flash.media.SoundChannel;
     import flash.net.URLRequest;
-    import commons.sound.ISoundManager;
+    import commons.manager.ISoundManager;
 
     /**
      * 声音管理器

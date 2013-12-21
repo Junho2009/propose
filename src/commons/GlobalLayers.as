@@ -11,6 +11,7 @@ package commons
         
         private var _bgLayer:Sprite;
         private var _windowLayer:Sprite;
+        private var _effectLayer:Sprite;
         
         
         public function GlobalLayers()
@@ -25,6 +26,9 @@ package commons
             
             _windowLayer = new Sprite();
             stage.addChild(_windowLayer);
+            
+            _effectLayer = new Sprite();
+            stage.addChild(_effectLayer);
         }
         
         /**
@@ -54,6 +58,11 @@ package commons
         public function get windowLayer():Sprite
         {
             return _windowLayer;
+        }
+        
+        public function get effectLayer():Sprite
+        {
+            return _effectLayer;
         }
     }
 }

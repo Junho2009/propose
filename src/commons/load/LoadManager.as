@@ -8,7 +8,8 @@ package commons.load
     import commons.debug.Debug;
     import commons.manager.base.ManagerGlobalName;
     import commons.manager.base.ManagerHub;
-    import commons.timer.ITimerManager;
+    import commons.manager.ITimerManager;
+    import commons.manager.ILoadManager;
 
     /**
      * 加载管理器

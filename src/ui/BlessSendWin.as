@@ -12,7 +12,7 @@ package ui
     import commons.buses.NetBus;
     import commons.manager.base.ManagerGlobalName;
     import commons.manager.base.ManagerHub;
-    import commons.timer.ITimerManager;
+    import commons.manager.ITimerManager;
     
     import mud.protos.BlessProtoOut;
     

@@ -18,9 +18,19 @@ package commons.manager.base
         public static const ModuleManager:String = "ManagerGlobalName.ModuleManager";
         
         /**
+         * 缓存管理器
+         */        
+        public static const CacheManager:String = "ManagerGlobalName.CacheManager";
+        
+        /**
          * 加载管理器
          */        
         public static const LoadManager:String = "ManagerGlobalName.LoadManager";
+        
+        /**
+         * 动画管理器
+         */        
+        public static const AnimManager:String = "ManagerGlobalName.AnimManager";
         
         /**
          * 输入协议的管理器

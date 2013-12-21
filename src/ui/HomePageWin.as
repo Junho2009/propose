@@ -9,7 +9,7 @@ package ui
     import commons.GlobalContext;
     import commons.WindowGlobalName;
     import commons.load.FilePath;
-    import commons.load.ILoadManager;
+    import commons.manager.ILoadManager;
     import commons.load.LoadRequestInfo;
     import commons.manager.base.ManagerGlobalName;
     import commons.manager.base.ManagerHub;

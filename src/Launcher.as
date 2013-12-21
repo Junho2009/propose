@@ -12,7 +12,9 @@ package
     import commons.GlobalContext;
     import commons.MySocket;
     import commons.WindowGlobalName;
+    import commons.anim.AnimManager;
     import commons.buses.NetBus;
+    import commons.cache.CacheManager;
     import commons.debug.Debug;
     import commons.load.FilePath;
     import commons.load.LoadManager;
@@ -20,8 +22,9 @@ package
     import commons.manager.base.ManagerGlobalName;
     import commons.manager.base.ManagerHub;
     import commons.module.ModuleManager;
-    import commons.sound.ISoundManager;
     import commons.timer.TimerManager;
+    
+    import effect.FlowerEffectManager;
     
     import mud.BlessProtoIn;
     import mud.MudModule;
@@ -109,12 +112,20 @@ package
             var moduleMgr:ModuleManager = new ModuleManager();
             ManagerHub.getInstance().register(ManagerGlobalName.ModuleManager, moduleMgr);
             
+            var cacheMgr:CacheManager = new CacheManager();
+            ManagerHub.getInstance().register(ManagerGlobalName.CacheManager, cacheMgr);
+            
             var loadMgr:LoadManager = new LoadManager();
             ManagerHub.getInstance().register(ManagerGlobalName.LoadManager, loadMgr);
+            
+            var animMgr:AnimManager = new AnimManager();
+            ManagerHub.getInstance().register(ManagerGlobalName.AnimManager, animMgr);
             
             moduleMgr.addModule(new MudModule());
             moduleMgr.addModule(new UIModule());
             moduleMgr.addModule(new SoundModule());
+            
+            FlowerEffectManager.getInstance().fallFlowers(500000);
             
 //            //testing
 //            var soundMgr:ISoundManager = ManagerHub.getInstance().getManager(ManagerGlobalName.SoundManager) as ISoundManager;

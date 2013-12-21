@@ -1,6 +1,7 @@
-package commons.load
+package commons.manager
 {
     import commons.manager.base.IManager;
+    import commons.load.LoadRequestInfo;
 
     /**
      * 加载管理器接口

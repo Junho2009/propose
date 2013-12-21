@@ -12,11 +12,14 @@ package commons.load
     {
         private static var _root:String = "./";
         
+        private static var _flowerPath:String = _root + "flower/";
+        
         
         
         public static function redirect(root:String):void
         {
             _root = root;
+            _flowerPath = _root + "flower/";
         }
         
         public static function trimRoot(url:String):String
@@ -46,6 +49,11 @@ package commons.load
                 default:
                     return root+"adapt/low/";
             }
+        }
+        
+        public static function get flowerPath():String
+        {
+            return _flowerPath;
         }
     }
 }

@@ -1,4 +1,4 @@
-package commons.timer
+package commons.manager
 {
     import commons.manager.base.IManager;
 

@@ -3,6 +3,7 @@ package commons.timer
     import flash.events.TimerEvent;
     import flash.utils.Dictionary;
     import flash.utils.Timer;
+    import commons.manager.ITimerManager;
 
     /**
      * 定时器管理器

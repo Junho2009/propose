@@ -40,7 +40,7 @@ package effect
             _animMgr = ManagerHub.getInstance().getManager(ManagerGlobalName.AnimManager) as IAnimManager;
             
             buttonMode = true;
-            addEventListener(MouseEvent.CLICK, onClick);
+            addEventListener(MouseEvent.MOUSE_DOWN, onClick);
         }
         
         public function set type(value:uint):void

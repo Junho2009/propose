@@ -12,13 +12,15 @@ package mud.protos.base
     public class MudProtoOut extends ProtoOutBase
     {
         private var _head:String = ""; // 协议头
+        private var _sn:uint = 0; // 协议编号
         protected var _propList:Vector.<Object>;
         
         
-        public function MudProtoOut(head:String)
+        public function MudProtoOut(head:String, sn:uint)
         {
             super();
             _head = head;
+            _sn = sn;
             _propList = new Vector.<Object>();
         }
         
@@ -38,12 +40,16 @@ package mud.protos.base
             
             readyPropList();
             
-            var content:String = _head + " ";
+            var content:String = _head + " " + _sn.toString();
             
             var mudProtoOut:MudProtoOut = null;
             var list:Array = null;
             
             const propListLen:uint = _propList.length;
+            
+            if (propListLen > 0)
+                content += MudUtil.DataDelimiter;
+            
             for (var i:int = 0; i < propListLen; ++i)
             {
                 var obj:Object = _propList[i];

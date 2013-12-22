@@ -1,4 +1,4 @@
-package mud
+package mud.protos
 {
     import mud.protos.base.MudProtoIn;
     

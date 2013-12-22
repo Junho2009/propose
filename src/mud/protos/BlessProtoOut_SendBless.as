@@ -7,15 +7,15 @@ package mud.protos
      * @author junho
      * <br/>Create: 2013.12.08
      */
-    public class BlessProtoOut extends MudProtoOut
+    public class BlessProtoOut_SendBless extends MudProtoOut
     {
         public var name:String;
         public var msg:String;
         
         
-        public function BlessProtoOut()
+        public function BlessProtoOut_SendBless()
         {
-            super("bless");
+            super("bless", 1);
         }
         
         override protected function readyPropList():void

@@ -7,7 +7,7 @@ package mud.protos.base
     import commons.protos.ProtoInBase;
     import commons.protos.ProtoInList;
     
-    import mud.BlessProtoIn;
+    import mud.protos.BlessProtoIn;
     import mud.MudUtil;
     import mud.protos.TestProtoIn;
     

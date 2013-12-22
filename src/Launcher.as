@@ -13,6 +13,7 @@ package
     import commons.MySocket;
     import commons.WindowGlobalName;
     import commons.anim.AnimManager;
+    import commons.buses.InnerEventBus;
     import commons.buses.NetBus;
     import commons.cache.CacheManager;
     import commons.debug.Debug;
@@ -24,10 +25,10 @@ package
     import commons.module.ModuleManager;
     import commons.timer.TimerManager;
     
-    import effect.FlowerEffectManager;
+    import effect.FlowerEffect;
     
-    import mud.BlessProtoIn;
     import mud.MudModule;
+    import mud.protos.BlessProtoIn;
     import mud.protos.TestProtoIn;
     
     import sound.SoundModule;
@@ -125,7 +126,7 @@ package
             moduleMgr.addModule(new UIModule());
             moduleMgr.addModule(new SoundModule());
             
-            FlowerEffectManager.getInstance().fallFlowers(500000);
+//            FlowerEffect.getInstance().fallFlowers(50000);
             
 //            //testing
 //            var soundMgr:ISoundManager = ManagerHub.getInstance().getManager(ManagerGlobalName.SoundManager) as ISoundManager;
@@ -143,6 +144,7 @@ package
         
         private function initBuses():void
         {
+            InnerEventBus.getInstance();
             NetBus.getInstance();
             
             //testing

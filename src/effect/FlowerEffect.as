@@ -6,7 +6,6 @@ package effect
     import commons.GlobalLayers;
     import commons.MathUtil;
     import commons.buses.InnerEventBus;
-    import commons.debug.Debug;
     import commons.manager.ITimerManager;
     import commons.manager.base.ManagerGlobalName;
     import commons.manager.base.ManagerHub;
@@ -16,10 +15,10 @@ package effect
      * @author junho
      * <br/>Create: 2013.12.21
      */    
-    public class FlowerEffectManager
+    public class FlowerEffect
     {
         private static var _allowInstance:Boolean = false;
-        private static var _instance:FlowerEffectManager = null;
+        private static var _instance:FlowerEffect = null;
         
         private var _timerMgr:ITimerManager;
         
@@ -31,7 +30,7 @@ package effect
         private var _fallingFlowerList:Vector.<Flower>;
         
         
-        public function FlowerEffectManager()
+        public function FlowerEffect()
         {
             if (!_allowInstance)
                 throw new IllegalOperationError("InnerEventBus is a singleton class.");
@@ -43,20 +42,14 @@ package effect
             
             InnerEventBus.getInstance().addEventListener(FlowerEffectEvent.FlowerClicked, onFlowerClicked);
             InnerEventBus.getInstance().addEventListener(FlowerEffectEvent.FlowerTouchDown, onFlowerTouchDown);
-            
-            _timerMgr.setTask(function():void
-            {
-                Debug.log("=========_flowerPool len: {0}", _flowerPool.length);
-                Debug.log("=========_fallingFlowerList len: {0}", _fallingFlowerList.length);
-            }, 1000, true);
         }
         
-        public static function getInstance():FlowerEffectManager
+        public static function getInstance():FlowerEffect
         {
             if (null == _instance)
             {
                 _allowInstance = true;
-                _instance = new FlowerEffectManager();
+                _instance = new FlowerEffect();
                 _allowInstance = false;
             }
             return _instance;
@@ -74,7 +67,22 @@ package effect
         
         public function clear():void
         {
+            _timerMgr.clearTask(onFallFlower);
+            _curFallRemain = 0;
             
+            var flower:Flower = null;
+            
+            for each (flower in _flowerPool)
+            {
+                flower.dispose();
+            }
+            _flowerPool.length = 0;
+            
+            for each (flower in _fallingFlowerList)
+            {
+                flower.dispose();
+            }
+            _fallingFlowerList.length = 0;
         }
         
         

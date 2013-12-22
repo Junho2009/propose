@@ -26,6 +26,9 @@ package ui
         [Embed(source = "../../../resources/bless/closebtn.png")]
         public var blessPaperCloseBtn:Class;
         
+        [Embed(source = "../../../resources/bless/blesswallrope.png")]
+        public var blessWallRope:Class;
+        
         
         private static var _isAllowInstance:Boolean = false;
         private static var _instance:CommonRes = null;

@@ -9,8 +9,8 @@ package ui
     import commons.GlobalContext;
     import commons.WindowGlobalName;
     import commons.load.FilePath;
-    import commons.manager.ILoadManager;
     import commons.load.LoadRequestInfo;
+    import commons.manager.ILoadManager;
     import commons.manager.base.ManagerGlobalName;
     import commons.manager.base.ManagerHub;
 
@@ -25,12 +25,20 @@ package ui
         
         private var _pic:Bitmap;
         
+        private var _blessWall:BlessWall;
+        
         
         public function HomePageWin()
         {
             super("HomePageWin", 0, 0);
             
             _loadMgr = ManagerHub.getInstance().getManager(ManagerGlobalName.LoadManager) as ILoadManager;
+            
+            _pic = new Bitmap();
+            addChild(_pic);
+            
+            _blessWall = new BlessWall();
+            addChild(_blessWall);
         }
         
         override public function init():void
@@ -39,11 +47,13 @@ package ui
             
             var shape:Sprite = new Sprite();
             shape.graphics.beginFill(0);
-            shape.graphics.drawRoundRect(0, 0, 100, 100, 3);
+            shape.graphics.drawRect(0, 0, 1, 1);
             shape.graphics.endFill();
             backgroundImage = shape;
             
             fullscreen = true;
+            
+            _blessWall.init();
             
             var reqInfo:LoadRequestInfo = new LoadRequestInfo();
             reqInfo.url = FilePath.adapt+"homepage_bg.jpg";
@@ -55,13 +65,16 @@ package ui
         
         override protected function onWindowOpened(e:Event):void
         {
+            _blessWall.addEventListener(Event.RESIZE, onBlessWallResized);
             GlobalContext.getInstance().stage.addEventListener(Event.RESIZE, onStageResize);
             
+            adjustPic();
             _winMgr.open(WindowGlobalName.BLESS_SEND);
         }
         
         override protected function onWindowClosed(e:Event):void
         {
+            _blessWall.removeEventListener(Event.RESIZE, onBlessWallResized);
             GlobalContext.getInstance().stage.removeEventListener(Event.RESIZE, onStageResize);
         }
         
@@ -69,7 +82,7 @@ package ui
         
         private function onPicLoaded(img:Bitmap):void
         {
-            _pic = img;
+            _pic.bitmapData = img.bitmapData;
             
             var params:Object = new Object();
             params.time = 3;
@@ -80,10 +93,14 @@ package ui
             Tweener.addTween(_pic, params);
             
             adjustPic();
-            addChild(_pic);
         }
         
         override protected function onStageResize(e:Event):void
+        {
+            adjustPic();
+        }
+        
+        private function onBlessWallResized(e:Event):void
         {
             adjustPic();
         }
@@ -92,6 +109,9 @@ package ui
         {
             _pic.x = GlobalContext.getInstance().stage.stageWidth - _pic.width >> 1;
             _pic.y = GlobalContext.getInstance().stage.stageHeight - _pic.height >> 1;
+            
+            _blessWall.x = _pic.x + (_pic.width - _blessWall.width >> 1);
+            _blessWall.y = _pic.y - _blessWall.height;
         }
     }
 }

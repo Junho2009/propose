@@ -14,7 +14,7 @@ package ui
     import commons.manager.base.ManagerHub;
     import commons.manager.ITimerManager;
     
-    import mud.protos.BlessProtoOut;
+    import mud.protos.BlessProtoOut_SendBless;
     
     import webgame.ui.GixButton;
     import webgame.ui.GixInput;
@@ -107,7 +107,7 @@ package ui
             if ("" == _content.text)
                 return;
             
-            var cmd:BlessProtoOut = new BlessProtoOut();
+            var cmd:BlessProtoOut_SendBless = new BlessProtoOut_SendBless();
             cmd.name = StringUtil.substitute("friend{0}", Math.random());
             cmd.msg = _content.text;
 //            NetBus.getInstance().send(cmd);
@@ -118,16 +118,16 @@ package ui
         
         private function fadeOut():void
         {
-            var param:Object = new Object();
-            param.x = GlobalContext.getInstance().stage.stageWidth >> 1;
-            param.y = 0;
-            param.scaleX = 0;
-            param.scaleY = 0;
-            param.alpha = 0;
-            param.time = 0.5;
-            param.transition = "linear";
-            param.onComplete = onFadeIn;
-            Tweener.addTween(this, param);
+            var params:Object = new Object();
+            params.x = GlobalContext.getInstance().stage.stageWidth >> 1;
+            params.y = 0;
+            params.scaleX = 0;
+            params.scaleY = 0;
+            params.alpha = 0;
+            params.time = 0.5;
+            params.transition = "linear";
+            params.onComplete = onFadeIn;
+            Tweener.addTween(this, params);
         }
         
         private function fadeIn():void

@@ -15,7 +15,7 @@ package mud.protos
         
         public function BlessProtoOut_SendBless()
         {
-            super("bless", 1);
+            super("bless", 131402);
         }
         
         override protected function readyPropList():void

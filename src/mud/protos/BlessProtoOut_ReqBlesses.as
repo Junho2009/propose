@@ -14,7 +14,7 @@ package mud.protos
         
         public function BlessProtoOut_ReqBlesses()
         {
-            super("bless", 2);
+            super("bless", 131401);
         }
     }
 }

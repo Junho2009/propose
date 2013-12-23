@@ -7,8 +7,9 @@ package mud.protos.base
     import commons.protos.ProtoInBase;
     import commons.protos.ProtoInList;
     
-    import mud.protos.BlessProtoIn;
     import mud.MudUtil;
+    import mud.protos.BlessProtoIn;
+    import mud.protos.BlessProtoIn_BlessList;
     import mud.protos.TestProtoIn;
     
     /**
@@ -27,6 +28,7 @@ package mud.protos.base
             // 绑定输入协议
             ProtoInList.getInstance().bind(TestProtoIn.HEAD, TestProtoIn);
             ProtoInList.getInstance().bind(BlessProtoIn.HEAD, BlessProtoIn);
+            ProtoInList.getInstance().bind(BlessProtoIn_BlessList.HEAD, BlessProtoIn_BlessList);
         }
         
         
@@ -58,6 +60,12 @@ package mud.protos.base
                     continue;
                 }
                 
+                var dataDecodeFunc:Function = function(element:*, index:int, arr:Array):void
+                {
+                    var str:String = String(element);
+                    arr[index] = MudUtil.decodeLineBreaks(str);
+                };
+                dataStrList.forEach(dataDecodeFunc);
                 protoIn.init(dataStrList);
                 
                 protoInList.push(protoIn);

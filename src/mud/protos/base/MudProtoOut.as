@@ -29,6 +29,16 @@ package mud.protos.base
             return _head;
         }
         
+        /**
+         * 协议编号
+         * @return 
+         * 
+         */        
+        public function get sn():uint
+        {
+            return _sn;
+        }
+        
         public function get dataStr():String
         {
             return _data.toString();
@@ -47,16 +57,17 @@ package mud.protos.base
             
             const propListLen:uint = _propList.length;
             
+            content += MudUtil.DataDelimiter;
             if (propListLen > 0)
-                content += MudUtil.DataDelimiter;
-            
-            for (var i:int = 0; i < propListLen; ++i)
             {
-                var obj:Object = _propList[i];
-                content += MudUtil.encodeParamDelimiter(parseToStr(obj));
-                
-                if (i < propListLen-1)
-                    content += MudUtil.DataDelimiter;
+                for (var i:int = 0; i < propListLen; ++i)
+                {
+                    var obj:Object = _propList[i];
+                    content += MudUtil.encodeParamDelimiter(parseToStr(obj));
+                    
+                    if (i < propListLen-1)
+                        content += MudUtil.DataDelimiter;
+                }
             }
             
             _data.writeUTFBytes(MudUtil.encodeLineBreaks(content) + "\n");

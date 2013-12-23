@@ -17,6 +17,16 @@ package mud
          */
         public static const DataDelimiter:String = "|";
         
+        /**
+         * 协议中数组元素分隔符
+         */
+        public static const ArrayElementDelimiter:String = "$";
+        
+        /**
+         * 协议中各段数据之间的分隔符
+         */
+        public static const ElementPropDelimiter:String = "^";
+        
         
         
         /**
@@ -61,6 +71,50 @@ package mud
         public static function decodeParamDelimiter(str:String):String
         {
             return str.replace(/@=D@/ig, "|");
+        }
+        
+        /**
+         * 将数组元素分隔符转换为指定的特殊字符串
+         * @param str:String
+         * @return String
+         * 
+         */        
+        public static function encodeArrayElementDelimiter(str:String):String
+        {
+            return str.replace(/\$/g, "@=a@");
+        }
+        
+        /**
+         * 将指定的特殊字符串转换为数组元素分隔符
+         * @param str:String
+         * @return String
+         * 
+         */        
+        public static function decodeArrayElementDelimiter(str:String):String
+        {
+            return str.replace(/@=a@/ig, "$");
+        }
+        
+        /**
+         * 将数组元素属性分隔符转换为指定的特殊字符串
+         * @param str:String
+         * @return String
+         * 
+         */        
+        public static function encodeElementPropDelimiter(str:String):String
+        {
+            return str.replace(/\^/g, "@=,@");
+        }
+        
+        /**
+         * 将指定的特殊字符串转换为数组元素分隔符
+         * @param str:String
+         * @return String
+         * 
+         */        
+        public static function decodeElementPropDelimiter(str:String):String
+        {
+            return str.replace(/@=,@/ig, "^");
         }
     }
 }

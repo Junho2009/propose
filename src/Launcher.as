@@ -10,6 +10,7 @@ package
     import mx.utils.StringUtil;
     
     import commons.GlobalContext;
+    import commons.GlobalLayers;
     import commons.MySocket;
     import commons.WindowGlobalName;
     import commons.anim.AnimManager;
@@ -24,11 +25,13 @@ package
     import commons.manager.base.ManagerHub;
     import commons.module.ModuleManager;
     import commons.timer.TimerManager;
-    
-    import effect.FlowerEffect;
+    import commons.vo.BlessVO;
     
     import mud.MudModule;
     import mud.protos.BlessProtoIn;
+    import mud.protos.BlessProtoIn_BlessList;
+    import mud.protos.BlessProtoOut_ReqBlessList;
+    import mud.protos.BlessProtoOut_SendBless;
     import mud.protos.TestProtoIn;
     
     import sound.SoundModule;
@@ -159,6 +162,11 @@ package
                 winMgr.open(WindowGlobalName.MSG_BOX, null
                     , StringUtil.substitute("{0}发来祝福：{1}", inc.authorName, inc.msg));
             });
+            NetBus.getInstance().addCallback(BlessProtoIn_BlessList.HEAD, function(inc:BlessProtoIn_BlessList):void
+            {
+                var blessList:Vector.<BlessVO> = inc.blessList;
+                const blessListLen:uint = blessList.length;
+            });
         }
         
         private function onConnect(e:Event):void
@@ -184,14 +192,15 @@ package
             btn.height = 200;
             btn.addEventListener(MouseEvent.CLICK, function(e:MouseEvent):void
             {
-                /*var proto:BlessProtoOut = new BlessProtoOut();
+                /*var proto:BlessProtoOut_SendBless = new BlessProtoOut_SendBless();
                 proto.name = "俊壕、海霞的朋友";
-                proto.msg = "祝你们白头偕老，永远恩爱！";
+                proto.msg = "我们\n发来\n贺电~~";
                 NetBus.getInstance().send(proto);*/
-                
-                winMgr.open(WindowGlobalName.MSG_BOX, null, "测试测试");
+                var proto:BlessProtoOut_ReqBlessList = new BlessProtoOut_ReqBlessList();
+                proto.page = 3;
+                NetBus.getInstance().send(proto);
             });
-            addChild(btn);
+            GlobalLayers.getInstance().windowLayer.addChild(btn);
         }
         
         private function onClose(e:Event):void

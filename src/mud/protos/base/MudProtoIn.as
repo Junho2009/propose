@@ -11,8 +11,6 @@ package mud.protos.base
      */
     public class MudProtoIn extends ProtoInBase
     {
-        private static const _DataDelimiter:String = "|";
-        
         private var _dataStrList:Array;
         private var _pos:uint = 0;
         

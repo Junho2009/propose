@@ -32,6 +32,11 @@ package commons.protos
             return _head;
         }
         
+        /**
+         * 将原始数据转换为协议内容数据
+         * @param rawData:*
+         * 
+         */        
         protected function analyseRawData(rawData:*):void
         {
             //...

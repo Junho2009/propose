@@ -10,111 +10,223 @@ package mud
         /**
          * 协议之间的分隔符
          */        
-        public static const ProtoDelimiter:String = "\n";
+        private static const _ProtoDelimiter:String = "\n";
+        /**
+         * 协议之间的分隔符的编码字符串
+         */        
+        private static const _ProtoDelimiterEncode:String = "@=n@";
+        /**
+         * 匹配“协议之间的分隔符”的正则表达式
+         */        
+        private static const _ProtoDelimiterRegExp:RegExp = new RegExp(_ProtoDelimiter, "g");
+        /**
+         * 匹配“协议之间的分隔符的编码字符串”的正则表达式
+         */        
+        private static const _ProtoDelimiterEncodeRegExp:RegExp = new RegExp(_ProtoDelimiterEncode, "g");
+        
+        
         
         /**
          * 协议中各段数据之间的分隔符
          */
-        public static const DataDelimiter:String = "|";
+        private static const _ParamDelimiter:String = ";";
+        /**
+         * 协议中各段数据之间的分隔符的编码字符串
+         */        
+        private static const _ParamDelimiterEncode:String = "@=s@";
+        /**
+         * 匹配“协议中各段数据之间的分隔符”的正则表达式
+         */        
+        private static const _ParamDelimiterRegExp:RegExp = new RegExp(_ParamDelimiter, "g");
+        /**
+         * 匹配“协议中各段数据之间的分隔符的编码字符串”的正则表达式
+         */        
+        private static const _ParamDelimiterEncodeRegExp:RegExp = new RegExp(_ParamDelimiterEncode, "g");
+        
+        
         
         /**
          * 协议中数组元素分隔符
          */
-        public static const ArrayElementDelimiter:String = "$";
+        private static const _ArrayElementDelimiter:String = "#";
+        /**
+         * 协议中数组元素分隔符的编码字符串
+         */        
+        private static const _ArrayElementDelimiterEncode:String = "@=p@";
+        /**
+         * 匹配“协议中数组元素分隔符”的正则表达式
+         */        
+        private static const _ArrayElementDelimiterRegExp:RegExp = new RegExp(_ArrayElementDelimiter, "g");
+        /**
+         * 匹配“协议中数组元素分隔符的编码字符串”的正则表达式
+         */        
+        private static const _ArrayElementDelimiterEncodeRegExp:RegExp = new RegExp(_ArrayElementDelimiterEncode, "g");
+        
+        
         
         /**
-         * 协议中各段数据之间的分隔符
+         * 数组元素中各属性之间的分隔符
          */
-        public static const ElementPropDelimiter:String = "^";
+        public static const _ElementPropDelimiter:String = ",";
+        /**
+         * 数组元素中各属性之间的分隔符的编码字符串
+         */        
+        public static const _ElementPropDelimiterEncode:String = "@=d@";
+        /**
+         * 匹配“数组元素中各属性之间的分隔符”的正则表达式
+         */        
+        private static const _ElementPropDelimiterRegExp:RegExp = new RegExp(_ElementPropDelimiter, "g");
+        /**
+         * 匹配“数组元素中各属性之间的分隔符的编码字符串”的正则表达式
+         */        
+        private static const _ElementPropDelimiterEncodeRegExp:RegExp = new RegExp(_ElementPropDelimiterEncode, "g");
+        
+        
+        /**
+         * 数组元素属性的键/值之间的分隔符
+         */        
+        private static const _ElementPropKVDelimiter:String = ":";
+        /**
+         * 数组元素属性的键/值之间的分隔符的编码字符串
+         */        
+        private static const _ElementPropKVDelimiterEncode:String = "@=c@";
+        /**
+         * 匹配“数组元素属性的键/值之间的分隔符”的正则表达式
+         */        
+        private static const _ElementPropKVDelimiterRegExp:RegExp = new RegExp(_ElementPropKVDelimiter, "g");
+        /**
+         * 匹配“数组元素属性的键/值之间的分隔符的编码字符串”的正则表达式
+         */        
+        private static const _ElementPropKVDelimiterEncodeRegExp:RegExp = new RegExp(_ElementPropKVDelimiterEncode, "g");
+        
+        
         
         
         
         /**
-         * 将换行符编码为指定的特殊字符串
-         * @param str:String
+         * 将输出内容编码为适合发送的格式
+         * @param orgStr:String
          * @return String
          * 
          */        
-        public static function encodeLineBreaks(str:String):String
+        public static function toEncode_ProtoOutStr(orgStr:String):String
         {
-            return str.replace(/\n/g, "@=n@");
+            var res:String = "";
+            
+            res = orgStr.replace(_ProtoDelimiterRegExp, _ProtoDelimiterEncode); // 编码了协议分隔符
+            res = res.replace(_ParamDelimiterRegExp, _ParamDelimiterEncode); // 编码了字段分隔符
+            res = res.replace(_ArrayElementDelimiterRegExp, _ArrayElementDelimiterEncode); // 编码了数组元素分隔符
+            res = res.replace(_ElementPropDelimiterRegExp, _ElementPropDelimiterEncode); // 编码了数组元素属性分隔符
+            res = res.replace(_ElementPropKVDelimiterRegExp, _ElementPropKVDelimiterEncode); // 编码了数组元素属性键值分隔符
+            
+            return res;
         }
         
         /**
-         * 将指定的特殊字符串转换为换行符
-         * @param str:String
-         * @return String
-         * 
-         */
-        public static function decodeLineBreaks(str:String):String
-        {
-            return str.replace(/@=n@/ig, "\n");
-        }
-        
-        /**
-         * 将数据分隔符转换为指定的特殊字符串
-         * @param str:String
+         * 将数据列表转换为服务端的数据字段描述串
+         * @param paramList:Array
          * @return String
          * 
          */        
-        public static function encodeParamDelimiter(str:String):String
+        public static function toEncode_ProtoParamsStr(paramList:Array):String
         {
-            return str.replace(/\|/g, "@=D@");
+            var res:String = "";
+            
+            if (null == paramList || 0 == paramList.length)
+                return res;
+            
+            const paramListLen:uint = paramList.length;
+            for (var i:int = 0; i < paramListLen; ++i)
+            {
+                if (0 != i)
+                    res += _ParamDelimiter;
+                
+                var obj:Object = paramList[i];
+                res += toEncode_ProtoOutStr(String(obj)); // 目前并不支持嵌套的数据结构，客户端发给服务端的数据统一是简单类型的
+            }
+            
+            return res;
+        }
+        
+        
+        
+        
+        
+        /**
+         * 将原生字符串转换为输入协议（字符串）列表
+         * @param rawStr:String
+         * @return Array
+         * 
+         */        
+        public static function toDecode_ProtoInStrList(rawStr:String):Array
+        {
+            var protoInStrList:Array = rawStr.split(_ProtoDelimiter);
+            for each (var protoInStr:String in protoInStrList)
+            {
+                protoInStr = protoInStr.replace(_ProtoDelimiterEncodeRegExp, _ProtoDelimiter);
+            }
+            return protoInStrList;
         }
         
         /**
-         * 将指定的特殊字符串转换为数据分隔符
-         * @param str:String
-         * @return String
+         * 将输入协议（字符串）转换为字段（字符串）列表
+         * @param protoInStr:String
+         * @return Array
          * 
          */        
-        public static function decodeParamDelimiter(str:String):String
+        public static function toDecode_ProtoParamStrList(protoInStr:String):Array
         {
-            return str.replace(/@=D@/ig, "|");
+            var paramStrList:Array = protoInStr.split(_ParamDelimiter);
+            for each (var paramStr:String in paramStrList)
+            {
+                paramStr = paramStr.replace(_ParamDelimiterEncodeRegExp, _ParamDelimiter);
+            }
+            return paramStrList;
         }
         
         /**
-         * 将数组元素分隔符转换为指定的特殊字符串
-         * @param str:String
-         * @return String
+         * 将数组描述串转换为数组对象
+         * @param arrayStr:String
+         * @return Array
          * 
          */        
-        public static function encodeArrayElementDelimiter(str:String):String
+        public static function toDecode_Array(arrayStr:String):Array
         {
-            return str.replace(/\$/g, "@=a@");
+            var array:Array = new Array();
+            
+            var elementStrList:Array = arrayStr.split(_ArrayElementDelimiter);
+            for each (var elementStr:String in elementStrList)
+            {
+                elementStr = elementStr.replace(_ArrayElementDelimiterEncodeRegExp, _ArrayElementDelimiter);
+                var element:Object = toDecode_Element(elementStr);
+                array.push(element);
+            }
+            
+            return array;
         }
         
         /**
-         * 将指定的特殊字符串转换为数组元素分隔符
-         * @param str:String
-         * @return String
+         * 将数组元素描述串转换为元素对象
+         * @param elementStr:String
+         * @return Object
          * 
          */        
-        public static function decodeArrayElementDelimiter(str:String):String
+        private static function toDecode_Element(elementStr:String):Object
         {
-            return str.replace(/@=a@/ig, "$");
-        }
-        
-        /**
-         * 将数组元素属性分隔符转换为指定的特殊字符串
-         * @param str:String
-         * @return String
-         * 
-         */        
-        public static function encodeElementPropDelimiter(str:String):String
-        {
-            return str.replace(/\^/g, "@=,@");
-        }
-        
-        /**
-         * 将指定的特殊字符串转换为数组元素分隔符
-         * @param str:String
-         * @return String
-         * 
-         */        
-        public static function decodeElementPropDelimiter(str:String):String
-        {
-            return str.replace(/@=,@/ig, "^");
+            var obj:Object = new Object();
+            
+            var propList:Array = elementStr.split(_ElementPropDelimiter);
+            for each (var propStr:String in propList)
+            {
+                propStr = propStr.replace(_ElementPropDelimiterEncodeRegExp, _ElementPropDelimiter);
+                
+                var propKVList:Array = propStr.split(_ElementPropKVDelimiter);
+                var propKey:String = String(propKVList[0]).replace(_ElementPropKVDelimiterEncodeRegExp, _ElementPropKVDelimiter);
+                var propValue:String = String(propKVList[1]).replace(_ElementPropKVDelimiterEncodeRegExp, _ElementPropKVDelimiter);
+                obj[propKey] = propValue;
+            }
+            
+            return obj;
         }
     }
 }

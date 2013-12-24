@@ -2,7 +2,6 @@ package mud.protos
 {
     import commons.vo.BlessVO;
     
-    import mud.MudUtil;
     import mud.protos.base.MudProtoIn;
     
     /**
@@ -33,22 +32,14 @@ package mud.protos
         {
             super.analyseRawData(rawData);
             
-            var rawStr:String = readString();
-            
             _blessList.length = 0;
             
-            var blessStrList:Array = rawStr.split(MudUtil.ArrayElementDelimiter);
-            const blessStrListLen:uint = blessStrList.length;
-            for (var i:int = 0; i < blessStrListLen; ++i)
+            var blessObjList:Array = readArray();
+            const blessObjListLen:uint = blessObjList.length;
+            for (var i:int = 0; i < blessObjListLen; ++i)
             {
-                var blessStr:String = blessStrList[i];
-                var blessInfo:Array = blessStr.split(MudUtil.ElementPropDelimiter);
-                
-                var authorName:String = blessInfo[0];
-                var msg:String = blessInfo[1];
-                var time:uint = blessInfo[2];
-                
-                var bless:BlessVO = new BlessVO(authorName, msg, time);
+                var blessObj:Object = blessObjList[i];
+                var bless:BlessVO = new BlessVO(blessObj);
                 _blessList.push(bless);
             }
         }

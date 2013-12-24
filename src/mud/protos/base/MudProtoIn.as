@@ -3,6 +3,8 @@ package mud.protos.base
     import flash.errors.IllegalOperationError;
     
     import commons.protos.ProtoInBase;
+    
+    import mud.MudUtil;
 
     /**
      * 从文字版mud服务器收到的协议
@@ -20,16 +22,7 @@ package mud.protos.base
             super(head);
         }
         
-        public function readInt():int
-        {
-            var dataStr:String =  _dataStrList[_pos++];
-            return int(dataStr);
-        }
         
-        public function readString():String
-        {
-            return _dataStrList[_pos++];
-        }
         
         override protected function analyseRawData(rawData:*):void
         {
@@ -44,6 +37,25 @@ package mud.protos.base
             }
             
             _dataStrList = rawData as Array;
+        }
+        
+        
+        
+        protected function readInt():int
+        {
+            var dataStr:String =  _dataStrList[_pos++];
+            return int(dataStr);
+        }
+        
+        protected function readString():String
+        {
+            return _dataStrList[_pos++];
+        }
+        
+        protected function readArray():Array
+        {
+            var arrayStr:String = _dataStrList[_pos++];
+            return MudUtil.toDecode_Array(arrayStr);
         }
     }
 }

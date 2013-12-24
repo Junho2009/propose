@@ -30,6 +30,7 @@ package
     import mud.MudModule;
     import mud.protos.BlessProtoIn;
     import mud.protos.BlessProtoIn_BlessList;
+    import mud.protos.BlessProtoOut_ReqBlessInfo;
     import mud.protos.BlessProtoOut_ReqBlessList;
     import mud.protos.BlessProtoOut_SendBless;
     import mud.protos.TestProtoIn;
@@ -193,12 +194,14 @@ package
             btn.addEventListener(MouseEvent.CLICK, function(e:MouseEvent):void
             {
                 /*var proto:BlessProtoOut_SendBless = new BlessProtoOut_SendBless();
-                proto.name = "俊壕、海霞的朋友";
+                proto.name = "俊壕、海霞的朋友"+Math.random().toString();
                 proto.msg = "我们\n发来\n贺电~~";
                 NetBus.getInstance().send(proto);*/
                 var proto:BlessProtoOut_ReqBlessList = new BlessProtoOut_ReqBlessList();
-                proto.page = 3;
+                proto.page = 1;
                 NetBus.getInstance().send(proto);
+                /*var proto:BlessProtoOut_ReqBlessInfo = new BlessProtoOut_ReqBlessInfo();
+                NetBus.getInstance().send(proto);*/
             });
             GlobalLayers.getInstance().windowLayer.addChild(btn);
         }

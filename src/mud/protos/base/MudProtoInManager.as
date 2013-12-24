@@ -43,7 +43,7 @@ package mud.protos.base
             var protoInList:Vector.<ProtoInBase> = new Vector.<ProtoInBase>();
             
             var rawStr:String = rawData.readUTFBytes(rawData.bytesAvailable);
-            var protoStrList:Array = rawStr.split(MudUtil.ProtoDelimiter);
+            var protoStrList:Array = MudUtil.toDecode_ProtoInStrList(rawStr);
             const protoStrListLen:uint = protoStrList.length;
             for (var i:int = 0; i < protoStrListLen; ++i)
             {
@@ -51,8 +51,9 @@ package mud.protos.base
                 if (!isValidProtoInStr(protoInStr))
                     continue;
                 
-                var dataStrList:Array = protoInStr.split(MudUtil.DataDelimiter);
-                var head:String = dataStrList.shift();
+                var paramStrList:Array = MudUtil.toDecode_ProtoParamStrList(protoInStr);
+                
+                var head:String = paramStrList.shift();
                 var protoIn:ProtoInBase = ProtoInList.getInstance().createProtoIn(head);
                 if (null == protoIn)
                 {
@@ -60,14 +61,7 @@ package mud.protos.base
                     continue;
                 }
                 
-                var dataDecodeFunc:Function = function(element:*, index:int, arr:Array):void
-                {
-                    var str:String = String(element);
-                    arr[index] = MudUtil.decodeLineBreaks(str);
-                };
-                dataStrList.forEach(dataDecodeFunc);
-                protoIn.init(dataStrList);
-                
+                protoIn.init(paramStrList);
                 protoInList.push(protoIn);
             }
             
@@ -78,7 +72,7 @@ package mud.protos.base
         
         private function isValidProtoInStr(str:String):Boolean
         {
-            return (0 == str.search(/\d+\|/));
+            return (0 == str.search(/\d+\;/));
         }
     }
 }

@@ -3,16 +3,13 @@ package mud.protos
     import mud.protos.base.MudProtoOut;
     
     /**
-     * 请求祝福列表信息
+     * 请求祝福数据信息
      * @author junho
      * <br/>Create: 2013.12.22
      */    
-    public class BlessProtoOut_ReqBlesses extends MudProtoOut
+    public class BlessProtoOut_ReqBlessInfo extends MudProtoOut
     {
-        public var page:uint;
-        
-        
-        public function BlessProtoOut_ReqBlesses()
+        public function BlessProtoOut_ReqBlessInfo()
         {
             super("bless", 131401);
         }

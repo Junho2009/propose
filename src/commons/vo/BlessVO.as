@@ -7,31 +7,36 @@ package commons.vo
      */    
     public class BlessVO
     {
-        private var _authorName:String;
-        private var _msg:String;
-        private var _time:uint;
+        private var _rawData:Object = null;
         
         
-        public function BlessVO(authorName:String, msg:String, time:uint)
+        public function BlessVO(rawData:Object)
         {
-            _authorName = authorName;
-            _msg = msg;
-            _time = time;
+            _rawData = rawData;
         }
         
         public function get authorName():String
         {
-            return _authorName;
+            if (null != _rawData && _rawData.hasOwnProperty("author_name"))
+                return _rawData["author_name"];
+            else
+                return "";
         }
         
         public function get msg():String
         {
-            return _msg;
+            if (null != _rawData && _rawData.hasOwnProperty("msg"))
+                return _rawData["msg"];
+            else
+                return "";
         }
         
         public function get time():uint
         {
-            return _time;
+            if (null != _rawData && _rawData.hasOwnProperty("time"))
+                return _rawData["time"];
+            else
+                return 0;
         }
     }
 }

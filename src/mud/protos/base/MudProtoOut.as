@@ -13,7 +13,7 @@ package mud.protos.base
     {
         private var _head:String = ""; // 协议头
         private var _sn:uint = 0; // 协议编号
-        protected var _propList:Vector.<Object>;
+        protected var _propList:Array;
         
         
         public function MudProtoOut(head:String, sn:uint)
@@ -21,7 +21,7 @@ package mud.protos.base
             super();
             _head = head;
             _sn = sn;
-            _propList = new Vector.<Object>();
+            _propList = new Array();
         }
         
         override public function get head():*
@@ -48,29 +48,13 @@ package mud.protos.base
         {
             super.ready();
             
+            _propList.length = 0;
+            _propList.push(_sn);
             readyPropList();
             
-            var content:String = _head + " " + _sn.toString();
-            
-            var mudProtoOut:MudProtoOut = null;
-            var list:Array = null;
-            
-            const propListLen:uint = _propList.length;
-            
-            content += MudUtil.DataDelimiter;
-            if (propListLen > 0)
-            {
-                for (var i:int = 0; i < propListLen; ++i)
-                {
-                    var obj:Object = _propList[i];
-                    content += MudUtil.encodeParamDelimiter(parseToStr(obj));
-                    
-                    if (i < propListLen-1)
-                        content += MudUtil.DataDelimiter;
-                }
-            }
-            
-            _data.writeUTFBytes(MudUtil.encodeLineBreaks(content) + "\n");
+            var content:String = _head + " ";
+            content += MudUtil.toEncode_ProtoParamsStr(_propList);
+            _data.writeUTFBytes(content + "\n");
         }
         
         
@@ -81,7 +65,6 @@ package mud.protos.base
          */
         protected function readyPropList():void
         {
-            _propList.length = 0;
         }
         
         
@@ -94,7 +77,7 @@ package mud.protos.base
          */
         private function parseToStr(obj:Object):String
         {
-            var res:String = "";
+            /*var res:String = "";
             
             var mudProtoOut:MudProtoOut = null;
             var list:Array = null;
@@ -120,7 +103,8 @@ package mud.protos.base
                 res += String(obj);
             }
             
-            return res;
+            return res;*/
+            return String(obj); // 其实目前不支持嵌套结构，客户端发给服务端的数据统一是简单类型的
         }
     }
 }

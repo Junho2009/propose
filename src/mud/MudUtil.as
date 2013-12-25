@@ -161,10 +161,13 @@ package mud
         public static function toDecode_ProtoInStrList(rawStr:String):Array
         {
             var protoInStrList:Array = rawStr.split(_ProtoDelimiter);
-            for each (var protoInStr:String in protoInStrList)
+            
+            const protoInStrListLen:uint = protoInStrList.length;
+            for (var i:int = 0; i < protoInStrListLen; ++i)
             {
-                protoInStr = protoInStr.replace(_ProtoDelimiterEncodeRegExp, _ProtoDelimiter);
+                protoInStrList[i] = String(protoInStrList[i]).replace(_ProtoDelimiterEncodeRegExp, _ProtoDelimiter);
             }
+            
             return protoInStrList;
         }
         
@@ -177,10 +180,13 @@ package mud
         public static function toDecode_ProtoParamStrList(protoInStr:String):Array
         {
             var paramStrList:Array = protoInStr.split(_ParamDelimiter);
-            for each (var paramStr:String in paramStrList)
+            
+            const paramStrListLen:uint = paramStrList.length;
+            for (var i:int = 0; i < paramStrListLen; ++i)
             {
-                paramStr = paramStr.replace(_ParamDelimiterEncodeRegExp, _ParamDelimiter);
+                paramStrList[i] = String(paramStrList[i]).replace(_ParamDelimiterEncodeRegExp, _ParamDelimiter);
             }
+            
             return paramStrList;
         }
         
@@ -195,10 +201,11 @@ package mud
             var array:Array = new Array();
             
             var elementStrList:Array = arrayStr.split(_ArrayElementDelimiter);
-            for each (var elementStr:String in elementStrList)
+            const elementStrListLen:uint = elementStrList.length;
+            for (var i:int = 0; i < elementStrListLen; ++i)
             {
-                elementStr = elementStr.replace(_ArrayElementDelimiterEncodeRegExp, _ArrayElementDelimiter);
-                var element:Object = toDecode_Element(elementStr);
+                elementStrList[i] = String(elementStrList[i]).replace(_ArrayElementDelimiterEncodeRegExp, _ArrayElementDelimiter);
+                var element:Object = toDecode_Element(String(elementStrList[i]));
                 array.push(element);
             }
             
@@ -216,11 +223,12 @@ package mud
             var obj:Object = new Object();
             
             var propList:Array = elementStr.split(_ElementPropDelimiter);
-            for each (var propStr:String in propList)
+            const propListLen:uint = propList.length;
+            for (var i:int = 0; i < propListLen; ++i)
             {
-                propStr = propStr.replace(_ElementPropDelimiterEncodeRegExp, _ElementPropDelimiter);
+                propList[i] = String(propList[i]).replace(_ElementPropDelimiterEncodeRegExp, _ElementPropDelimiter);
                 
-                var propKVList:Array = propStr.split(_ElementPropKVDelimiter);
+                var propKVList:Array = String(propList[i]).split(_ElementPropKVDelimiter);
                 var propKey:String = String(propKVList[0]).replace(_ElementPropKVDelimiterEncodeRegExp, _ElementPropKVDelimiter);
                 var propValue:String = String(propKVList[1]).replace(_ElementPropKVDelimiterEncodeRegExp, _ElementPropKVDelimiter);
                 obj[propKey] = propValue;

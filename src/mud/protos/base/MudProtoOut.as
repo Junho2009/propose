@@ -66,45 +66,5 @@ package mud.protos.base
         protected function readyPropList():void
         {
         }
-        
-        
-        
-        /**
-         * 将对象转换为字符串
-         * @param obj:Object
-         * @return String
-         * 
-         */
-        private function parseToStr(obj:Object):String
-        {
-            /*var res:String = "";
-            
-            var mudProtoOut:MudProtoOut = null;
-            var list:Array = null;
-            var listLen:uint = 0;
-            var i:int = 0;
-            
-            if (obj is MudProtoOut)
-            {
-                mudProtoOut = obj as MudProtoOut;
-                mudProtoOut.ready();
-                res += mudProtoOut.dataStr;
-            }
-            else if (obj is Array)
-            {
-                list = obj as Array;
-                for (i = 0; i < listLen; ++i)
-                {
-                    res += parseToStr(list[i]);
-                }
-            }
-            else
-            {
-                res += String(obj);
-            }
-            
-            return res;*/
-            return String(obj); // 其实目前不支持嵌套结构，客户端发给服务端的数据统一是简单类型的
-        }
     }
 }

@@ -195,7 +195,7 @@ package
             {
                 /*var proto:BlessProtoOut_SendBless = new BlessProtoOut_SendBless();
                 proto.name = "俊壕、海霞的朋友"+Math.random().toString();
-                proto.msg = "我们\n发来\n贺电~~";
+                proto.msg = "我们\n发来\n贺电~~这是;测试#特殊,字符:的内容~";
                 NetBus.getInstance().send(proto);*/
                 var proto:BlessProtoOut_ReqBlessList = new BlessProtoOut_ReqBlessList();
                 proto.page = 1;

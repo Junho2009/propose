@@ -18,7 +18,7 @@ package mud.protos
         
         public function BlessProtoIn_BlessList()
         {
-            super(head);
+            super(HEAD);
             _blessList = new Vector.<BlessVO>();
         }
         

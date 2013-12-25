@@ -58,7 +58,7 @@ package ui
             var reqInfo:LoadRequestInfo = new LoadRequestInfo();
             reqInfo.url = FilePath.adapt+"homepage_bg.jpg";
             reqInfo.completedCallback = onPicLoaded;
-            _loadMgr.load(reqInfo);
+//            _loadMgr.load(reqInfo);
         }
         
         

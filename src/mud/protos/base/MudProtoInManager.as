@@ -25,10 +25,6 @@ package mud.protos.base
         
         public function MudProtoInManager()
         {
-            // 绑定输入协议
-            ProtoInList.getInstance().bind(TestProtoIn.HEAD, TestProtoIn);
-            ProtoInList.getInstance().bind(BlessProtoIn.HEAD, BlessProtoIn);
-            ProtoInList.getInstance().bind(BlessProtoIn_BlessList.HEAD, BlessProtoIn_BlessList);
         }
         
         
@@ -48,7 +44,7 @@ package mud.protos.base
             for (var i:int = 0; i < protoStrListLen; ++i)
             {
                 var protoInStr:String = protoStrList[i];
-                if (!isValidProtoInStr(protoInStr))
+                if (!MudUtil.isValidProtoInStr(protoInStr))
                     continue;
                 
                 var paramStrList:Array = MudUtil.toDecode_ProtoParamStrList(protoInStr);
@@ -66,13 +62,6 @@ package mud.protos.base
             }
             
             return protoInList;
-        }
-        
-        
-        
-        private function isValidProtoInStr(str:String):Boolean
-        {
-            return (0 == str.search(/\d+\;/));
         }
     }
 }

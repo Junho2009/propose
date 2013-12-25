@@ -3,17 +3,26 @@ package ui
     import flash.display.Bitmap;
     import flash.events.Event;
     import flash.events.MouseEvent;
-    import flash.geom.Point;
     
     import caurina.transitions.Tweener;
     
     import commons.GlobalContext;
+    import commons.MathUtil;
+    import commons.buses.NetBus;
     import commons.load.FilePath;
     import commons.load.LoadRequestInfo;
     import commons.manager.ILoadManager;
     import commons.manager.base.ManagerGlobalName;
     import commons.manager.base.ManagerHub;
+    import commons.protos.ProtoInList;
+    import commons.vo.BlessVO;
     
+    import mud.protos.BlessProtoIn_BlessInfo;
+    import mud.protos.BlessProtoIn_BlessList;
+    import mud.protos.BlessProtoOut_ReqBlessInfo;
+    import mud.protos.BlessProtoOut_ReqBlessList;
+    
+    import webgame.ui.GixButton;
     import webgame.ui.View;
     import webgame.ui.Widget;
     
@@ -26,11 +35,20 @@ package ui
     {
         private var _loadMgr:ILoadManager;
         
+        private var _bBGReady:Boolean = false;
+        
         private var _rope:Widget;
         private var _bRoleMouseDown:Boolean = false;
         private var _curPosY:Number = 0;
         private var _bPulledDown:Boolean = false;
         private var _bAutoPullDoing:Boolean = false;
+        
+        private var _blessContentLayer:View;
+        private var _blessPaperList:Vector.<BlessPaper>;
+        
+        private var _changePageBtn:GixButton;
+        private var _maxPage:uint = 0;
+        private var _curShowPage:uint = 0;
         
         
         public function BlessWall()
@@ -41,6 +59,17 @@ package ui
             
             _rope = new Widget("");
             _rope.buttonMode = true;
+            
+            _blessContentLayer = new View("");
+            addChild(_blessContentLayer);
+            
+            _blessPaperList = new Vector.<BlessPaper>();
+            
+            _changePageBtn = new GixButton();
+            
+            visible = false;
+            
+            bindProtos();
         }
         
         override public function init():void
@@ -50,6 +79,14 @@ package ui
             _rope.init();
             _rope.backgroundImage = CommonRes.getInstance().getBitmap("blessWallRope");
             
+            _blessContentLayer.init();
+            _blessContentLayer.addEventListener(MouseEvent.MOUSE_DOWN, onBlessContentLayerMouseDown);
+            
+            _changePageBtn.init();
+            _changePageBtn.width = 120;
+            _changePageBtn.height = 30;
+            _changePageBtn.label = "看看其他祝福";
+            
             var reqInfo:LoadRequestInfo = new LoadRequestInfo();
             reqInfo.url = FilePath.adapt+"blesswall_bg.jpg";
             reqInfo.completedCallback = onBGLoaded;
@@ -58,8 +95,22 @@ package ui
         
         
         
+        private function bindProtos():void
+        {
+            ProtoInList.getInstance().bind(BlessProtoIn_BlessInfo.HEAD, BlessProtoIn_BlessInfo);
+            ProtoInList.getInstance().bind(BlessProtoIn_BlessList.HEAD, BlessProtoIn_BlessList);
+            
+            NetBus.getInstance().addCallback(BlessProtoIn_BlessInfo.HEAD, onRecvBlessInfo);
+            NetBus.getInstance().addCallback(BlessProtoIn_BlessList.HEAD, onRecvBlessList);
+            
+            var reqBlessInfoProto:BlessProtoOut_ReqBlessInfo = new BlessProtoOut_ReqBlessInfo();
+            NetBus.getInstance().send(reqBlessInfoProto);
+        }
+        
         private function onBGLoaded(img:Bitmap):void
         {
+            _bBGReady = true;
+            
             backgroundImage = img;
             backgroundImage.alpha = 0.7;
             
@@ -69,10 +120,20 @@ package ui
             _rope.addEventListener(MouseEvent.MOUSE_DOWN, onRopeMouseDown);
             addChild(_rope);
             
+            _changePageBtn.x = img.width - _changePageBtn.width >> 1;
+            _changePageBtn.y = img.height - _changePageBtn.height - 20;
+            _changePageBtn.addEventListener(MouseEvent.CLICK, onChangePage);
+            addChild(_changePageBtn);
+            
             GlobalContext.getInstance().stage.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
             GlobalContext.getInstance().stage.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
             
+            _blessContentLayer.resize(this.width, this.height);
+            randomBlessPapersPos();
+            
             dispatchEvent(new Event(Event.RESIZE));
+            
+            visible = true;
         }
         
         private function onRoleClick(e:MouseEvent):void
@@ -86,6 +147,20 @@ package ui
         {
             _bRoleMouseDown = true;
             _curPosY = e.stageY;
+        }
+        
+        private function onChangePage(e:MouseEvent):void
+        {
+            var reqPage:uint = _curShowPage + 1;
+            if (reqPage > _maxPage)
+                reqPage = 1;
+            
+            if (reqPage != _curShowPage && reqPage >= 1 && reqPage <= _maxPage)
+            {
+                var reqBlessListProto:BlessProtoOut_ReqBlessList = new BlessProtoOut_ReqBlessList();
+                reqBlessListProto.page = _curShowPage;
+                NetBus.getInstance().send(reqBlessListProto);
+            }
         }
         
         private function onMouseMove(e:MouseEvent):void
@@ -137,6 +212,74 @@ package ui
             _bAutoPullDoing = true;
             Tweener.removeTweens(this);
             Tweener.addTween(this, params);
+        }
+        
+        private function randomBlessPapersPos():void
+        {
+            const curBlessPapershowNum:uint = _blessContentLayer.numChildren;
+            for (var i:int = 0; i < curBlessPapershowNum; ++i)
+            {
+                var blessPaper:BlessPaper = _blessContentLayer.getChildAt(i) as BlessPaper;
+                const maxPosX:Number = width - blessPaper.width;
+                const maxPosY:Number = height - blessPaper.height;
+                blessPaper.x = MathUtil.randomInt(0, maxPosX);
+                blessPaper.y = MathUtil.randomInt(0, maxPosY);
+            }
+        }
+        
+        private function clearBlessPaper():void
+        {
+            while (_blessContentLayer.numChildren > 0)
+                _blessContentLayer.removeChildAt(0);
+            _blessPaperList.length = 0;
+        }
+        
+        private function onBlessContentLayerMouseDown(e:MouseEvent):void
+        {
+            var blessPaper:BlessPaper = e.target as BlessPaper;
+            if (null == blessPaper)
+                return;
+            _blessContentLayer.setChildIndex(blessPaper, _blessContentLayer.numChildren-1);
+        }
+        
+        
+        
+        
+        
+        private function onRecvBlessInfo(inc:BlessProtoIn_BlessInfo):void
+        {
+            _maxPage = inc.page;
+            _curShowPage = MathUtil.randomInt(1, _maxPage);
+            
+            var reqBlessListProto:BlessProtoOut_ReqBlessList = new BlessProtoOut_ReqBlessList();
+            reqBlessListProto.page = _curShowPage;
+            NetBus.getInstance().send(reqBlessListProto);
+        }
+        
+        private function onRecvBlessList(inc:BlessProtoIn_BlessList):void
+        {
+            clearBlessPaper();
+            
+            var blessVOList:Vector.<BlessVO> = inc.blessList;
+            const blessVOListLen:uint = blessVOList.length;
+            for (var i:int = 0; i < blessVOListLen; ++i)
+            {
+                var blessPaper:BlessPaper = null;
+                
+                if (i >= _blessPaperList.length)
+                {
+                    blessPaper = new BlessPaper();
+                    _blessPaperList.push(blessPaper);
+                }
+                
+                blessPaper = _blessPaperList[i];
+                blessPaper.paperType = MathUtil.randomInt(1, 4);
+                blessPaper.content = blessVOList[i];
+                _blessContentLayer.addChild(blessPaper);
+            }
+            
+            if (_bBGReady)
+                randomBlessPapersPos();
         }
     }
 }

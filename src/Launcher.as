@@ -25,14 +25,12 @@ package
     import commons.manager.base.ManagerHub;
     import commons.module.ModuleManager;
     import commons.timer.TimerManager;
-    import commons.vo.BlessVO;
+    
+    import effect.FlowerEffect;
     
     import mud.MudModule;
     import mud.protos.BlessProtoIn;
-    import mud.protos.BlessProtoIn_BlessList;
-    import mud.protos.BlessProtoOut_ReqBlessInfo;
     import mud.protos.BlessProtoOut_ReqBlessList;
-    import mud.protos.BlessProtoOut_SendBless;
     import mud.protos.TestProtoIn;
     
     import sound.SoundModule;
@@ -162,11 +160,6 @@ package
                 var winMgr:IWindowManager = ManagerHub.getInstance().getManager(ManagerGlobalName.WindowManager) as IWindowManager;
                 winMgr.open(WindowGlobalName.MSG_BOX, null
                     , StringUtil.substitute("{0}发来祝福：{1}", inc.authorName, inc.msg));
-            });
-            NetBus.getInstance().addCallback(BlessProtoIn_BlessList.HEAD, function(inc:BlessProtoIn_BlessList):void
-            {
-                var blessList:Vector.<BlessVO> = inc.blessList;
-                const blessListLen:uint = blessList.length;
             });
         }
         

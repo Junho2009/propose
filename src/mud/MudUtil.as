@@ -82,6 +82,7 @@ package mud
         private static const _ElementPropDelimiterEncodeRegExp:RegExp = new RegExp(_ElementPropDelimiterEncode, "g");
         
         
+        
         /**
          * 数组元素属性的键/值之间的分隔符
          */        
@@ -98,6 +99,10 @@ package mud
          * 匹配“数组元素属性的键/值之间的分隔符的编码字符串”的正则表达式
          */        
         private static const _ElementPropKVDelimiterEncodeRegExp:RegExp = new RegExp(_ElementPropKVDelimiterEncode, "g");
+        
+        
+        
+        private static const _ProtoInStrHeadRegExp:RegExp = new RegExp("\\d+"+_ParamDelimiter);
         
         
         
@@ -152,6 +157,10 @@ package mud
         
         
         
+        public static function isValidProtoInStr(rawStr:String):Boolean
+        {
+            return (0 == rawStr.search(_ProtoInStrHeadRegExp));
+        }
         /**
          * 将原生字符串转换为输入协议（字符串）列表
          * @param rawStr:String

@@ -2,6 +2,7 @@ package ui
 {
     import flash.events.Event;
     import flash.events.MouseEvent;
+    import flash.text.TextFieldAutoSize;
     
     import mx.utils.StringUtil;
     
@@ -10,14 +11,15 @@ package ui
     import commons.GlobalContext;
     import commons.MathUtil;
     import commons.buses.NetBus;
+    import commons.manager.ITimerManager;
     import commons.manager.base.ManagerGlobalName;
     import commons.manager.base.ManagerHub;
-    import commons.manager.ITimerManager;
     
     import mud.protos.BlessProtoOut_SendBless;
     
     import webgame.ui.GixButton;
     import webgame.ui.GixInput;
+    import webgame.ui.GixText;
     import webgame.ui.Widget;
     
     /**
@@ -30,6 +32,9 @@ package ui
         private var _timeMgr:ITimerManager;
         
         private var _content:GixInput;
+        private var _authorNameLabel:GixText;
+        private var _authorName:GixInput;
+        
         private var _sendBtn:GixButton;
         private var _closeBtn:Widget;
         
@@ -41,6 +46,8 @@ package ui
             _timeMgr = ManagerHub.getInstance().getManager(ManagerGlobalName.TimerManager) as ITimerManager;
             
             _content = new GixInput();
+            _authorNameLabel = new GixText();
+            _authorName = new GixInput();
             _sendBtn = new GixButton();
             _closeBtn = new Widget("");
             
@@ -60,17 +67,35 @@ package ui
             _content.wordWrap = true;
             _content.leading = 7;
             _content.x = 15;
-            _content.y = 60;
+            _content.y = 50;
             _content.width = width - _content.x*2;
             _content.height = 80;
             addChild(_content);
+            
+            _authorNameLabel = new GixText();
+            _authorNameLabel.init();
+            _authorNameLabel.color = 0x000000;
+            _authorNameLabel.autoSize = TextFieldAutoSize.LEFT;
+            _authorNameLabel.text = "名字：";
+            _authorNameLabel.x = 20;
+            _authorNameLabel.y = _content.y + _content.height + 10;
+            addChild(_authorNameLabel);
+            
+            _authorName = new GixInput();
+            _authorName.init();
+            _authorName.color = 0x000000;
+            _authorName.x = _authorNameLabel.x + _authorNameLabel.width;
+            _authorName.y = _authorNameLabel.y;
+            _authorName.width = width - _authorName.x - 5;
+            _authorName.height = _authorNameLabel.height;
+            addChild(_authorName);
             
             _sendBtn.init();
             _sendBtn.bindSkin(null);
             _sendBtn.width = 63;
             _sendBtn.height = 22;
             _sendBtn.color = 0xff0000;
-            _sendBtn.label = "发  送";
+            _sendBtn.label = "发祝福";
             _sendBtn.x = 51;
             _sendBtn.y = 3;
             addChild(_sendBtn);
@@ -108,11 +133,10 @@ package ui
                 return;
             
             var cmd:BlessProtoOut_SendBless = new BlessProtoOut_SendBless();
-            cmd.name = StringUtil.substitute("friend{0}", Math.random());
+            cmd.name = _authorName.text;
             cmd.msg = _content.text;
-//            NetBus.getInstance().send(cmd);
+            NetBus.getInstance().send(cmd);
             
-//            close();
             fadeOut();
         }
         

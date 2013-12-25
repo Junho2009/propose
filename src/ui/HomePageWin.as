@@ -35,10 +35,7 @@ package ui
             _loadMgr = ManagerHub.getInstance().getManager(ManagerGlobalName.LoadManager) as ILoadManager;
             
             _pic = new Bitmap();
-            addChild(_pic);
-            
             _blessWall = new BlessWall();
-            addChild(_blessWall);
         }
         
         override public function init():void
@@ -55,10 +52,15 @@ package ui
             
             _blessWall.init();
             
+            adjustPic();
+            
+            addChild(_pic);
+            addChild(_blessWall);
+            
             var reqInfo:LoadRequestInfo = new LoadRequestInfo();
             reqInfo.url = FilePath.adapt+"homepage_bg.jpg";
             reqInfo.completedCallback = onPicLoaded;
-//            _loadMgr.load(reqInfo);
+            _loadMgr.load(reqInfo);
         }
         
         

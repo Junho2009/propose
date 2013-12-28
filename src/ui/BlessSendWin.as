@@ -1,7 +1,6 @@
 package ui
 {
     import flash.events.Event;
-    import flash.events.MouseEvent;
     import flash.text.TextFieldAutoSize;
     
     import mx.utils.StringUtil;
@@ -18,9 +17,7 @@ package ui
     import mud.protos.BlessProtoOut_SendBless;
     
     import webgame.ui.GixButton;
-    import webgame.ui.GixInput;
     import webgame.ui.GixText;
-    import webgame.ui.Widget;
     
     /**
      * 写祝福的祝愿纸
@@ -31,12 +28,11 @@ package ui
     {
         private var _timeMgr:ITimerManager;
         
-        private var _content:GixInput;
+        private var _content:GixTipsInput;
         private var _authorNameLabel:GixText;
-        private var _authorName:GixInput;
+        private var _authorName:GixTipsInput;
         
         private var _sendBtn:GixButton;
-        private var _closeBtn:Widget;
         
         
         public function BlessSendWin()
@@ -45,11 +41,10 @@ package ui
             
             _timeMgr = ManagerHub.getInstance().getManager(ManagerGlobalName.TimerManager) as ITimerManager;
             
-            _content = new GixInput();
+            _content = new GixTipsInput();
             _authorNameLabel = new GixText();
-            _authorName = new GixInput();
+            _authorName = new GixTipsInput();
             _sendBtn = new GixButton();
-            _closeBtn = new Widget("");
             
             init();
         }
@@ -66,28 +61,28 @@ package ui
             _content.multiline = true;
             _content.wordWrap = true;
             _content.leading = 7;
-            _content.x = 15;
+            _content.tips = "(这里填上您的祝福>_<)";
+            _content.x = 10;
             _content.y = 50;
             _content.width = width - _content.x*2;
             _content.height = 80;
             addChild(_content);
             
-            _authorNameLabel = new GixText();
             _authorNameLabel.init();
             _authorNameLabel.color = 0x000000;
             _authorNameLabel.autoSize = TextFieldAutoSize.LEFT;
             _authorNameLabel.text = "名字：";
-            _authorNameLabel.x = 20;
+            _authorNameLabel.x = 10;
             _authorNameLabel.y = _content.y + _content.height + 10;
             addChild(_authorNameLabel);
             
-            _authorName = new GixInput();
             _authorName.init();
             _authorName.color = 0x000000;
+            _authorName.tips = "(填上您的名字^_^)";
             _authorName.x = _authorNameLabel.x + _authorNameLabel.width;
-            _authorName.y = _authorNameLabel.y;
+            _authorName.y = _authorNameLabel.y-2;
             _authorName.width = width - _authorName.x - 5;
-            _authorName.height = _authorNameLabel.height;
+            _authorName.height = 26;
             addChild(_authorName);
             
             _sendBtn.init();
@@ -99,13 +94,6 @@ package ui
             _sendBtn.x = 51;
             _sendBtn.y = 3;
             addChild(_sendBtn);
-            
-            _closeBtn.init();
-            _closeBtn.backgroundImage = CommonRes.getInstance().getBitmap("blessPaperCloseBtn");
-            _closeBtn.buttonMode = true;
-            _closeBtn.x = width - _closeBtn.width - 15;
-            _closeBtn.y = 18;
-//            addChild(_closeBtn);
         }
         
         
@@ -113,7 +101,6 @@ package ui
         override protected function onWindowOpened(e:Event):void
         {
             _sendBtn.callback = onSend;
-            _closeBtn.addEventListener(MouseEvent.CLICK, close);
             
             x = 20;
             y = GlobalContext.getInstance().stage.stageHeight - height >> 1;
@@ -122,7 +109,6 @@ package ui
         override protected function onWindowClosed(e:Event):void
         {
             _sendBtn.callback = null;
-            _closeBtn.removeEventListener(MouseEvent.CLICK, close);
         }
         
         
@@ -134,7 +120,7 @@ package ui
             
             var cmd:BlessProtoOut_SendBless = new BlessProtoOut_SendBless();
             cmd.name = _authorName.text;
-            cmd.msg = _content.text;
+            cmd.msg = _content.text.replace(/\r/g, "\n");
             NetBus.getInstance().send(cmd);
             
             fadeOut();

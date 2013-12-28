@@ -6,6 +6,7 @@ package
     import flash.events.MouseEvent;
     import flash.external.ExternalInterface;
     import flash.net.Socket;
+    import flash.system.Security;
     
     import mx.utils.StringUtil;
     
@@ -20,6 +21,7 @@ package
     import commons.debug.Debug;
     import commons.load.FilePath;
     import commons.load.LoadManager;
+    import commons.manager.ISoundManager;
     import commons.manager.IWindowManager;
     import commons.manager.base.ManagerGlobalName;
     import commons.manager.base.ManagerHub;
@@ -55,9 +57,6 @@ package
 
         public function Launcher()
         {
-            var a1:int = 1234;
-            var s1:String = String(a1);
-            
             initConfig();
             addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
         }
@@ -131,12 +130,14 @@ package
 //            FlowerEffect.getInstance().fallFlowers(50000);
             
 //            //testing
-//            var soundMgr:ISoundManager = ManagerHub.getInstance().getManager(ManagerGlobalName.SoundManager) as ISoundManager;
-//            soundMgr.play(FilePath.root+"music/1.mp3", true);
+            var soundMgr:ISoundManager = ManagerHub.getInstance().getManager(ManagerGlobalName.SoundManager) as ISoundManager;
+            soundMgr.play(FilePath.root+"music/1.mp3", true);
         }
         
         private function initSocket():void
         {
+            Security.loadPolicyFile(StringUtil.substitute("xmlsocket://{0}:2525", _context.config.serverAddr));
+            
             _socket = MySocket.getInstance();
             _socket.addEventListener(Event.CONNECT, onConnect);
             _socket.addEventListener(Event.CLOSE, onClose);
@@ -196,7 +197,7 @@ package
                 /*var proto:BlessProtoOut_ReqBlessInfo = new BlessProtoOut_ReqBlessInfo();
                 NetBus.getInstance().send(proto);*/
             });
-            GlobalLayers.getInstance().windowLayer.addChild(btn);
+//            GlobalLayers.getInstance().windowLayer.addChild(btn);
         }
         
         private function onClose(e:Event):void

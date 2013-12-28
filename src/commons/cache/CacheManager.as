@@ -22,27 +22,27 @@ package commons.cache
         
         public function addData(data:*, key:String, version:String=null):void
         {
-            _dataDic[genKey(key, version)] = data;
+            _dataDic[genUniqueKey(key, version)] = data;
         }
         
         public function getData(key:String, version:String=null):*
         {
-            return _dataDic[genKey(key, version)];
+            return _dataDic[genUniqueKey(key, version)];
         }
         
         public function remove(key:String, version:String=null):void
         {
-            var key:String = genKey(key, version);
-            if (null != _dataDic[key])
+            var uk:String = genUniqueKey(key, version);
+            if (null != _dataDic[uk])
             {
-                _dataDic[key] = null;
-                delete _dataDic[key];
+                _dataDic[uk] = null;
+                delete _dataDic[uk];
             }
         }
         
         
         
-        private function genKey(key:String, version:String=null):String
+        private function genUniqueKey(key:String, version:String=null):String
         {
             if (null == version)
                 return key;

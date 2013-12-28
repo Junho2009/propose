@@ -23,8 +23,8 @@ package ui
         [Embed(source = "../../../resources/bless/paper4.png")]
         public var blessPaper4:Class;
         
-        [Embed(source = "../../../resources/bless/closebtn.png")]
-        public var blessPaperCloseBtn:Class;
+//        [Embed(source = "../../../resources/bless/closebtn.png")]
+//        public var blessPaperCloseBtn:Class;
         
         [Embed(source = "../../../resources/bless/blesswallrope.png")]
         public var blessWallRope:Class;

@@ -3,22 +3,16 @@ package
     import flash.display.Sprite;
     import flash.events.Event;
     import flash.events.IOErrorEvent;
-    import flash.events.MouseEvent;
     import flash.external.ExternalInterface;
     import flash.net.Socket;
-    import flash.system.Security;
-    
-    import mx.utils.StringUtil;
     
     import commons.GlobalContext;
-    import commons.GlobalLayers;
     import commons.MySocket;
     import commons.WindowGlobalName;
     import commons.anim.AnimManager;
     import commons.buses.InnerEventBus;
     import commons.buses.NetBus;
     import commons.cache.CacheManager;
-    import commons.debug.Debug;
     import commons.load.FilePath;
     import commons.load.LoadManager;
     import commons.manager.ISoundManager;
@@ -28,19 +22,13 @@ package
     import commons.module.ModuleManager;
     import commons.timer.TimerManager;
     
-    import effect.FlowerEffect;
-    
     import mud.MudModule;
-    import mud.protos.BlessProtoIn;
-    import mud.protos.BlessProtoOut_ReqBlessList;
-    import mud.protos.TestProtoIn;
     
     import sound.SoundModule;
     
     import ui.UIModule;
     
     import webgame.core.GlobalContext;
-    import webgame.ui.GixButton;
 
     /**
      * 启动器
@@ -136,7 +124,7 @@ package
         
         private function initSocket():void
         {
-            Security.loadPolicyFile(StringUtil.substitute("xmlsocket://{0}:2525", _context.config.serverAddr));
+//            Security.loadPolicyFile(StringUtil.substitute("xmlsocket://{0}:2525", _context.config.serverAddr));
             
             _socket = MySocket.getInstance();
             _socket.addEventListener(Event.CONNECT, onConnect);
@@ -149,27 +137,16 @@ package
         {
             InnerEventBus.getInstance();
             NetBus.getInstance();
-            
-            //testing
-            NetBus.getInstance().addCallback(TestProtoIn.HEAD, function(inc:TestProtoIn):void
-            {
-                Debug.log("收到{0}协议. name: {1}, value: {2}, msg: {3}"
-                    , inc.head, inc.name, inc.value, inc.msg);
-            });
-            NetBus.getInstance().addCallback(BlessProtoIn.HEAD, function(inc:BlessProtoIn):void
-            {
-                var winMgr:IWindowManager = ManagerHub.getInstance().getManager(ManagerGlobalName.WindowManager) as IWindowManager;
-                winMgr.open(WindowGlobalName.MSG_BOX, null
-                    , StringUtil.substitute("{0}发来祝福：{1}", inc.authorName, inc.msg));
-            });
         }
         
         private function onConnect(e:Event):void
         {
             trace("socket连接成功");
             
-            //testing
             launcherSupportsLib();
+            
+            var winMgr:IWindowManager = ManagerHub.getInstance().getManager(ManagerGlobalName.WindowManager) as IWindowManager;
+            winMgr.open(WindowGlobalName.HOME_PAGE);
         }
         
         private function launcherSupportsLib():void
@@ -177,27 +154,25 @@ package
             webgame.core.GlobalContext.init(this);
             
             //testing
-            var winMgr:IWindowManager = ManagerHub.getInstance().getManager(ManagerGlobalName.WindowManager) as IWindowManager;
-            
-            winMgr.open(WindowGlobalName.HOME_PAGE);
-            
-            var btn:GixButton = new GixButton();
+            /*var btn:GixButton = new GixButton();
             btn.init();
             btn.width = 300;
             btn.height = 200;
             btn.addEventListener(MouseEvent.CLICK, function(e:MouseEvent):void
             {
-                /*var proto:BlessProtoOut_SendBless = new BlessProtoOut_SendBless();
-                proto.name = "俊壕、海霞的朋友"+Math.random().toString();
-                proto.msg = "我们\n发来\n贺电~~这是;测试#特殊,字符:的内容~";
-                NetBus.getInstance().send(proto);*/
-                var proto:BlessProtoOut_ReqBlessList = new BlessProtoOut_ReqBlessList();
-                proto.page = 1;
-                NetBus.getInstance().send(proto);
-                /*var proto:BlessProtoOut_ReqBlessInfo = new BlessProtoOut_ReqBlessInfo();
-                NetBus.getInstance().send(proto);*/
+//                var proto:BlessProtoOut_SendBless = new BlessProtoOut_SendBless();
+//                proto.name = "俊壕、海霞的朋友"+Math.random().toString();
+//                proto.msg = "我们\n发来\n贺电~~这是;测试#特殊,字符:的内容~";
+//                NetBus.getInstance().send(proto);
+                
+//                var proto:BlessProtoOut_ReqBlessList = new BlessProtoOut_ReqBlessList();
+//                proto.page = 1;
+//                NetBus.getInstance().send(proto);
+                
+//                var proto:BlessProtoOut_ReqBlessInfo = new BlessProtoOut_ReqBlessInfo();
+//                NetBus.getInstance().send(proto);
             });
-//            GlobalLayers.getInstance().windowLayer.addChild(btn);
+            GlobalLayers.getInstance().windowLayer.addChild(btn);*/
         }
         
         private function onClose(e:Event):void
@@ -209,45 +184,5 @@ package
         {
             trace("socket发生IO错误");
         }
-    }
-}
-
-
-
-import flash.display.Shape;
-import flash.display.SimpleButton;
-
-
-class CustomSimpleButton extends SimpleButton {
-    private var upColor:uint   = 0xFFCC00;
-    private var overColor:uint = 0xCCFF00;
-    private var downColor:uint = 0x00CCFF;
-    private var size:uint      = 80;
-    
-    public function CustomSimpleButton() {
-        downState      = new ButtonDisplayState(downColor, size);
-        overState      = new ButtonDisplayState(overColor, size);
-        upState        = new ButtonDisplayState(upColor, size);
-        hitTestState   = new ButtonDisplayState(upColor, size * 2);
-        hitTestState.x = -(size / 4);
-        hitTestState.y = hitTestState.x;
-        useHandCursor  = true;
-    }
-}
-
-class ButtonDisplayState extends Shape {
-    private var bgColor:uint;
-    private var size:uint;
-    
-    public function ButtonDisplayState(bgColor:uint, size:uint) {
-        this.bgColor = bgColor;
-        this.size    = size;
-        draw();
-    }
-    
-    private function draw():void {
-        graphics.beginFill(bgColor);
-        graphics.drawRect(0, 0, size, size);
-        graphics.endFill();
     }
 }

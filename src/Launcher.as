@@ -5,6 +5,9 @@ package
     import flash.events.IOErrorEvent;
     import flash.external.ExternalInterface;
     import flash.net.Socket;
+    import flash.system.Security;
+    
+    import mx.utils.StringUtil;
     
     import commons.GlobalContext;
     import commons.MySocket;
@@ -124,7 +127,7 @@ package
         
         private function initSocket():void
         {
-//            Security.loadPolicyFile(StringUtil.substitute("xmlsocket://{0}:2525", _context.config.serverAddr));
+            Security.loadPolicyFile(StringUtil.substitute("xmlsocket://{0}:2525", _context.config.serverAddr));
             
             _socket = MySocket.getInstance();
             _socket.addEventListener(Event.CONNECT, onConnect);

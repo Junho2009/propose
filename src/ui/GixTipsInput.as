@@ -2,7 +2,6 @@ package ui
 {
     import flash.events.Event;
     import flash.events.FocusEvent;
-    import flash.events.TextEvent;
     
     import mx.utils.StringUtil;
     
@@ -82,7 +81,7 @@ package ui
         private function try2UpdateTextByTips():void
         {
             if (!_bHasContent)
-                textField.htmlText = StringUtil.substitute("<font color='#969696'>{0}</font>", _tips);
+                textField.htmlText = StringUtil.substitute("<font color='#767676'>{0}</font>", _tips);
         }
     }
 }

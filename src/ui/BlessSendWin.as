@@ -61,7 +61,7 @@ package ui
             _content.multiline = true;
             _content.wordWrap = true;
             _content.leading = 7;
-            _content.tips = "(这里填上您的祝福>_<)";
+            _content.tips = "(这里填上您的祝福^^)";
             _content.x = 10;
             _content.y = 50;
             _content.width = width - _content.x*2;

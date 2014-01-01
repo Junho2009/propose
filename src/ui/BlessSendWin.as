@@ -1,6 +1,7 @@
 package ui
 {
     import flash.events.Event;
+    import flash.geom.Point;
     import flash.text.TextFieldAutoSize;
     
     import mx.utils.StringUtil;
@@ -13,9 +14,11 @@ package ui
     import commons.manager.ITimerManager;
     import commons.manager.base.ManagerGlobalName;
     import commons.manager.base.ManagerHub;
+    import commons.vo.BlessVO;
     
     import mud.protos.BlessProtoOut_SendBless;
     
+    import webgame.core.bus.UIBus;
     import webgame.ui.GixButton;
     import webgame.ui.GixText;
     
@@ -33,6 +36,8 @@ package ui
         private var _authorName:GixTipsInput;
         
         private var _sendBtn:GixButton;
+        
+        private var _paperType:uint = 0;
         
         
         public function BlessSendWin()
@@ -53,8 +58,8 @@ package ui
         {
             super.init();
             
-            const paperType:int = MathUtil.randomInt(1, 4);
-            backgroundImage = CommonRes.getInstance().getBitmap(StringUtil.substitute("blessPaper{0}", paperType));
+            _paperType = MathUtil.randomInt(1, 4);
+            backgroundImage = CommonRes.getInstance().getBitmap(StringUtil.substitute("blessPaper{0}", _paperType));
             
             _content.init();
             _content.color = 0x000000;
@@ -104,11 +109,14 @@ package ui
             
             x = 20;
             y = GlobalContext.getInstance().stage.stageHeight - height >> 1;
+            
+            UIBus.getInstance().addEventListener(BlessEvent.AddSelfBlessToWall, onAddSelfBlessToWall);
         }
         
         override protected function onWindowClosed(e:Event):void
         {
             _sendBtn.callback = null;
+            UIBus.getInstance().removeEventListener(BlessEvent.AddSelfBlessToWall, onAddSelfBlessToWall);
         }
         
         
@@ -123,8 +131,52 @@ package ui
             cmd.msg = _content.text.replace(/\r/g, "\n");
             NetBus.getInstance().send(cmd);
             
-            fadeOut();
+//            fadeOut();
+            onReady2Show();
         }
+        
+        private function onReady2Show():void
+        {
+            var params:Object = new Object();
+            params.x = GlobalContext.getInstance().stage.stageWidth >> 1;
+            params.y = GlobalContext.getInstance().stage.stageHeight - height - 100;
+            params.time = 0.5;
+            params.transition = "easeInOutCirc";
+            params.onComplete = function():void
+            {
+                var blessData:Object = new Object();
+                blessData["author_name"] = _authorName.text;
+                blessData["msg"] = _content.text;
+                blessData["time"] = (new Date()).getTime() / 1000;
+                var blessVO:BlessVO = new BlessVO(blessData);
+                
+                UIBus.getInstance().dispatchEvent(new BlessEvent(BlessEvent.ReqAddSelfBlessToWall
+                    , {blessVO: blessVO, paperType: _paperType}));
+            };
+            Tweener.addTween(this, params);
+        }
+        
+        private function onAddSelfBlessToWall(e:BlessEvent):void
+        {
+            var targetPos:Point = e.param.pos as Point;
+            var callback:Function = e.param.callback as Function;
+            
+            var params:Object = new Object();
+            params.x = targetPos.x;
+            params.y = targetPos.y;
+            params.time = 1;
+            params.transition = "easeInOutCirc";
+            params.onComplete = function():void
+            {
+                callback();
+                
+                alpha = 0;
+                _timeMgr.setTask(fadeIn, 1024, false);
+            }
+            Tweener.addTween(this, params);
+        }
+        
+        
         
         private function fadeOut():void
         {
@@ -142,8 +194,8 @@ package ui
         
         private function fadeIn():void
         {
-            const paperType:int = MathUtil.randomInt(1, 4);
-            backgroundImage = CommonRes.getInstance().getBitmap(StringUtil.substitute("blessPaper{0}", paperType));
+            _paperType = MathUtil.randomInt(1, 4);
+            backgroundImage = CommonRes.getInstance().getBitmap(StringUtil.substitute("blessPaper{0}", _paperType));
             
             _content.text = "";
             

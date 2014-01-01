@@ -21,6 +21,9 @@ package ui
      */    
     internal class BlessPaper extends View
     {
+        public static const DefaultW:Number = 171;
+        public static const DefaultH:Number = 198;
+        
         private var _content:GixText;
         private var _authorName:GixText;
         private var _time:GixText;
@@ -60,6 +63,11 @@ package ui
             
             addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
             addEventListener(Event.REMOVED_FROM_STAGE, onRemovedFromStage);
+        }
+        
+        public function get paperType():uint
+        {
+            return _paperType;
         }
         
         public function set paperType(value:uint):void

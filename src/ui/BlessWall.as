@@ -3,6 +3,7 @@ package ui
     import flash.display.Bitmap;
     import flash.events.Event;
     import flash.events.MouseEvent;
+    import flash.geom.Point;
     
     import caurina.transitions.Tweener;
     
@@ -22,6 +23,7 @@ package ui
     import mud.protos.BlessProtoOut_ReqBlessInfo;
     import mud.protos.BlessProtoOut_ReqBlessList;
     
+    import webgame.core.bus.UIBus;
     import webgame.ui.GixButton;
     import webgame.ui.View;
     import webgame.ui.Widget;
@@ -70,6 +72,9 @@ package ui
             visible = false;
             
             bindProtos();
+            
+            addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
+            addEventListener(Event.REMOVED_FROM_STAGE, onRemovedFromStage);
         }
         
         override public function init():void
@@ -105,6 +110,16 @@ package ui
             
             var reqBlessInfoProto:BlessProtoOut_ReqBlessInfo = new BlessProtoOut_ReqBlessInfo();
             NetBus.getInstance().send(reqBlessInfoProto);
+        }
+        
+        private function onAddedToStage(e:Event):void
+        {
+            UIBus.getInstance().addEventListener(BlessEvent.ReqAddSelfBlessToWall, onReqAddSelfBlessToWall);
+        }
+        
+        private function onRemovedFromStage(e:Event):void
+        {
+            UIBus.getInstance().removeEventListener(BlessEvent.ReqAddSelfBlessToWall, onReqAddSelfBlessToWall);
         }
         
         private function onBGLoaded(img:Bitmap):void
@@ -180,7 +195,7 @@ package ui
             _bRoleMouseDown = false;
         }
         
-        private function onPullDown():void
+        private function onPullDown(compCallback:Function = null, callbackParam:Object = null):void
         {
             var params:Object = new Object();
             params.y = 0;
@@ -190,6 +205,14 @@ package ui
             {
                 _bAutoPullDoing = false;
                 _bPulledDown = true;
+                
+                if (null != compCallback)
+                {
+                    if (null != callbackParam)
+                        compCallback(callbackParam);
+                    else
+                        compCallback();
+                }
             };
             
             _bAutoPullDoing = true;
@@ -225,6 +248,18 @@ package ui
                 blessPaper.x = MathUtil.randomInt(0, maxPosX);
                 blessPaper.y = MathUtil.randomInt(0, maxPosY);
             }
+        }
+        
+        private function getBlessPaperRandomPos():Point
+        {
+            var pos:Point = new Point();
+            
+            const maxPosX:Number = width - BlessPaper.DefaultW;
+            const maxPosY:Number = height - BlessPaper.DefaultH;
+            pos.x = MathUtil.randomInt(0, maxPosX);
+            pos.y = MathUtil.randomInt(0, maxPosY);
+            
+            return pos;
         }
         
         private function clearBlessPaper():void
@@ -280,6 +315,48 @@ package ui
             
             if (_bBGReady)
                 randomBlessPapersPos();
+        }
+        
+        private function onReqAddSelfBlessToWall(e:BlessEvent):void
+        {
+            if (!_bPulledDown)
+            {
+                mouseChildren = false;
+                mouseEnabled = false;
+                onPullDown(onHandleAddBless2WallReqAfterPullDown, e.param);
+            }
+            else
+            {
+                onHandleAddBless2WallReqAfterPullDown(e.param);
+            }
+        }
+        
+        private function onHandleAddBless2WallReqAfterPullDown(param:Object):void
+        {
+            var blessVO:BlessVO = param.blessVO as BlessVO;
+            const paperType:uint = param.paperType as uint;
+            
+            var pos:Point = getBlessPaperRandomPos();
+            var blessPaper:BlessPaper = new BlessPaper();
+            blessPaper.paperType = paperType;
+            blessPaper.content = blessVO;
+            blessPaper.x = pos.x;
+            blessPaper.y = pos.y;
+            _blessPaperList.push(blessPaper);
+            blessPaper.visible = false;
+            _blessContentLayer.addChild(blessPaper);
+            
+            var handleCallback:Function = function():void
+            {
+                blessPaper.visible = true;
+                mouseChildren = true;
+                mouseEnabled = true;
+                onZipUp();
+            };
+            
+            var gPos:Point = _blessContentLayer.localToGlobal(pos);
+            UIBus.getInstance().dispatchEvent(new BlessEvent(BlessEvent.AddSelfBlessToWall
+                , {pos: gPos, callback: handleCallback}));
         }
     }
 }

@@ -146,10 +146,6 @@ package
             
             var winMgr:IWindowManager = ManagerHub.getInstance().getManager(ManagerGlobalName.WindowManager) as IWindowManager;
             winMgr.open(WindowGlobalName.LOGIN_WIN);
-            
-            // testing
-//            var soundMgr:ISoundManager = ManagerHub.getInstance().getManager(ManagerGlobalName.SoundManager) as ISoundManager;
-//            soundMgr.play(FilePath.root+"music/1.mp3", true);
         }
         
         private function launcherSupportsLib():void

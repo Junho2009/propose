@@ -1,9 +1,11 @@
 package flowersend
 {
+    import commons.WindowGlobalName;
     import commons.buses.InnerEventBus;
     import commons.buses.NetBus;
     import commons.manager.IFlowerSendManager;
     import commons.manager.ILoginManager;
+    import commons.manager.IWindowManager;
     import commons.manager.base.ManagerGlobalName;
     import commons.manager.base.ManagerHub;
     import commons.protos.ProtoInList;
@@ -19,16 +21,20 @@ package flowersend
     public class FlowerSendManager implements IFlowerSendManager
     {
         private var _loginMgr:ILoginManager;
+        private var _wm:IWindowManager;
         
         private var _flowerEffect:FlowerEffect;
         
         private var _selfSentNum:uint = 0;
         private var _totalSentNum:uint = 0;
         
+        private var _bFirstTime:Boolean = true;
+        
         
         public function FlowerSendManager()
         {
             _loginMgr = ManagerHub.getInstance().getManager(ManagerGlobalName.LoginManager) as ILoginManager;
+            _wm = ManagerHub.getInstance().getManager(ManagerGlobalName.WindowManager) as IWindowManager;
             
             _flowerEffect = FlowerEffect.getInstance();
             
@@ -63,6 +69,12 @@ package flowersend
             _totalSentNum = inc.sentTotal;
             
             InnerEventBus.getInstance().dispatchEvent(new FlowerSendEvent(FlowerSendEvent.SentInfoUpdated));
+            
+            if (_bFirstTime && 0 == _selfSentNum)
+            {
+                _wm.open(WindowGlobalName.MSG_BOX, null, "点击飘下来的花瓣，可以给我们赠花哦！");
+                _bFirstTime = false;
+            }
         }
         
         private function onRecvSendLimInfo(inc:FlowerProtoIn_SendLimInfo):void

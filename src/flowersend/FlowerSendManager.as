@@ -5,6 +5,7 @@ package flowersend
     import commons.buses.NetBus;
     import commons.manager.IFlowerSendManager;
     import commons.manager.ILoginManager;
+    import commons.manager.ISceneManager;
     import commons.manager.IWindowManager;
     import commons.manager.base.ManagerGlobalName;
     import commons.manager.base.ManagerHub;
@@ -12,6 +13,7 @@ package flowersend
     
     import mud.protos.FlowerProtoIn_SendLimInfo;
     import mud.protos.FlowerProtoIn_SentInfo;
+    import mud.protos.FlowerProtoIn_ShowEffect;
     
     /**
      * 鲜花赠送管理器
@@ -22,6 +24,7 @@ package flowersend
     {
         private var _loginMgr:ILoginManager;
         private var _wm:IWindowManager;
+        private var _sceneMgr:ISceneManager;
         
         private var _flowerEffect:FlowerEffect;
         
@@ -35,14 +38,17 @@ package flowersend
         {
             _loginMgr = ManagerHub.getInstance().getManager(ManagerGlobalName.LoginManager) as ILoginManager;
             _wm = ManagerHub.getInstance().getManager(ManagerGlobalName.WindowManager) as IWindowManager;
+            _sceneMgr = ManagerHub.getInstance().getManager(ManagerGlobalName.Scene3dManager) as ISceneManager;
             
             _flowerEffect = FlowerEffect.getInstance();
             
             ProtoInList.getInstance().bind(FlowerProtoIn_SentInfo.HEAD, FlowerProtoIn_SentInfo);
             ProtoInList.getInstance().bind(FlowerProtoIn_SendLimInfo.HEAD, FlowerProtoIn_SendLimInfo);
+            ProtoInList.getInstance().bind(FlowerProtoIn_ShowEffect.HEAD, FlowerProtoIn_ShowEffect);
             
             NetBus.getInstance().addCallback(FlowerProtoIn_SentInfo.HEAD, onRecvSentInfo);
             NetBus.getInstance().addCallback(FlowerProtoIn_SendLimInfo.HEAD, onRecvSendLimInfo);
+            NetBus.getInstance().addCallback(FlowerProtoIn_ShowEffect.HEAD, onShowEffect);
         }
         
         public function get selfSentNum():uint
@@ -84,6 +90,11 @@ package flowersend
             
             const averageTime:uint = inc.duration / inc.limitCount * 1000;
             _flowerEffect.fallFlowers(inc.limitCount, averageTime / 2, averageTime * 1.5);
+        }
+        
+        private function onShowEffect(inc:FlowerProtoIn_ShowEffect):void
+        {
+            _sceneMgr.playEffect(1);
         }
     }
 }

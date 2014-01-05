@@ -13,6 +13,8 @@ package commons.load
         private static var _root:String = "./";
         
         private static var _flowerPath:String = _root + "flower/";
+        private static var _effect3dPath:String = _root + "effect3d/";
+        private static var _effect3dTexPath:String = _root + "effect3d/texture/";
         
         
         
@@ -20,6 +22,8 @@ package commons.load
         {
             _root = root;
             _flowerPath = _root + "flower/";
+            _effect3dPath = _root + "effect3d/";
+            _effect3dTexPath = _root + "effect3d/texture/";
         }
         
         public static function trimRoot(url:String):String
@@ -54,6 +58,16 @@ package commons.load
         public static function get flowerPath():String
         {
             return _flowerPath;
+        }
+        
+        public static function get effect3dPath():String
+        {
+            return _effect3dPath;
+        }
+        
+        public static function get effect3dTexPath():String
+        {
+            return _effect3dTexPath;
         }
     }
 }

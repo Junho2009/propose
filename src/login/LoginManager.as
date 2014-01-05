@@ -1,5 +1,7 @@
 package login
 {
+    import flash.geom.Point;
+    
     import commons.WindowGlobalName;
     import commons.buses.InnerEventBus;
     import commons.buses.NetBus;
@@ -52,7 +54,7 @@ package login
                     
                     var wm:IWindowManager = ManagerHub.getInstance().getManager(ManagerGlobalName.WindowManager) as IWindowManager;
                     wm.close(WindowGlobalName.LOGIN_WIN);
-                    wm.open(WindowGlobalName.HOME_PAGE);
+                    wm.open(WindowGlobalName.HOME_PAGE, new Point(0, 0));
                     
                     InnerEventBus.getInstance().dispatchEvent(new LoginEvent(LoginEvent.LoginSuccessfully));
                     

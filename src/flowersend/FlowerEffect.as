@@ -36,7 +36,7 @@ package flowersend
         public function FlowerEffect()
         {
             if (!_allowInstance)
-                throw new IllegalOperationError("InnerEventBus is a singleton class.");
+                throw new IllegalOperationError("FlowerEffect is a singleton class.");
             
             _timerMgr = ManagerHub.getInstance().getManager(ManagerGlobalName.TimerManager) as ITimerManager;
             

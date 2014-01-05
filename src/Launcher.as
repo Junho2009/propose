@@ -8,6 +8,8 @@ package
     
     import mx.utils.StringUtil;
     
+    import away3d.Stage3dModule;
+    
     import commons.GlobalContext;
     import commons.MySocket;
     import commons.WindowGlobalName;
@@ -40,7 +42,7 @@ package
      * @author Junho
      * <br/>Create: 2013.07.07
      */
-    [SWF(width = "1000", height = "600", frameRate = 30
+    [SWF(width = "1000", height = "600", frameRate = 60
         , backgroundColor = "0x666666")]
     public class Launcher extends Sprite
     {
@@ -155,6 +157,7 @@ package
         
         private function initModules():void
         {
+            _moduleMgr.addModule(new Stage3dModule());
             _moduleMgr.addModule(new UIModule());
             _moduleMgr.addModule(new LoginModule());
             _moduleMgr.addModule(new SoundModule());

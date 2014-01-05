@@ -68,6 +68,7 @@ package commons.load
                 case FileType.PNG:
                 case FileType.JPG:
                 case FileType.SWF:
+                case FileType.AWP:
                     _urlLoader.dataFormat = URLLoaderDataFormat.BINARY;
                     break;
                     

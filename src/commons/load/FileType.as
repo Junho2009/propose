@@ -42,5 +42,10 @@ package commons.load
          * SWF
          */        
         public static const SWF:String = "swf";
+        
+        /**
+         * awp
+         */        
+        public static const AWP:String = "awp";
     }
 }

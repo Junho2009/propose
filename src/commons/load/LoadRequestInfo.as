@@ -31,6 +31,11 @@ package commons.load
         
         public var isNeetToRetry:Boolean = true;
         
+        /**
+         * 扩展数据
+         */        
+        public var param:Object = null;
+        
         
         
         /**
@@ -51,7 +56,7 @@ package commons.load
         public function set urlList(value:Vector.<String>):void
         {
             if (null == value || 0 == value.length)
-                throw new IllegalOperationError("指定的加载列表为空");
+                return;
             
             _urlList = value;
             _totalFileNum = value.length;
@@ -65,6 +70,23 @@ package commons.load
         public function get totalFileNum():uint
         {
             return _totalFileNum;
+        }
+        
+        public function clone():LoadRequestInfo
+        {
+            var req:LoadRequestInfo = new LoadRequestInfo();
+            
+            req.url = this.url;
+            req.urlList = this.urlList;
+            req.token = this.token;
+            req.completedCallback = this.completedCallback;
+            req.completedCallbackData = this.completedCallbackData;
+            req.failCallback = this.failCallback;
+            req.failCallbackData = this.failCallbackData;
+            req.singleCompCallback = this.singleCompCallback;
+            req.isNeetToRetry = this.isNeetToRetry;
+            
+            return req;
         }
         
         public function dispose():void

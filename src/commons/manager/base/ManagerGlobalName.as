@@ -56,5 +56,10 @@ package commons.manager.base
          * 鲜花赠送管理器
          */
         public static const FlowerSendManager:String = "ManagerGlobalName.FlowerSendManager";
+        
+        /**
+         * 3d场景管理器
+         */
+        public static const Scene3dManager:String = "ManagerGlobalName.Scene3dManager";
     }
 }

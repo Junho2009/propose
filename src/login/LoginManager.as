@@ -18,6 +18,7 @@ package login
      */    
     public class LoginManager implements ILoginManager
     {
+        private var _bLogined:Boolean = false;
         private var _userName:String = "";
         private var _bFirstTime:Boolean = true;
         
@@ -26,6 +27,11 @@ package login
         {
             ProtoInList.getInstance().bind(LoginProtoIn_Login.HEAD, LoginProtoIn_Login);
             NetBus.getInstance().addCallback(LoginProtoIn_Login.HEAD, onRecvLoginRes);
+        }
+        
+        public function get isLogined():Boolean
+        {
+            return _bLogined;
         }
         
         public function get userName():String
@@ -42,6 +48,8 @@ package login
                 
                 if (_bFirstTime)
                 {
+                    _bLogined = true;
+                    
                     var wm:IWindowManager = ManagerHub.getInstance().getManager(ManagerGlobalName.WindowManager) as IWindowManager;
                     wm.close(WindowGlobalName.LOGIN_WIN);
                     wm.open(WindowGlobalName.HOME_PAGE);

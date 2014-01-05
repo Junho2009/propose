@@ -10,10 +10,7 @@ package flowersend
     import commons.manager.ITimerManager;
     import commons.manager.base.ManagerGlobalName;
     import commons.manager.base.ManagerHub;
-    import commons.protos.ProtoInList;
     
-    import mud.protos.FlowerProtoIn_SendLimInfo;
-    import mud.protos.FlowerProtoIn_SentInfo;
     import mud.protos.FlowerProtoOut_SendFlower;
 
     /**
@@ -93,15 +90,6 @@ package flowersend
         
         
         
-        private function bindProtos():void
-        {
-            ProtoInList.getInstance().bind(FlowerProtoIn_SentInfo.HEAD, FlowerProtoIn_SentInfo);
-            ProtoInList.getInstance().bind(FlowerProtoIn_SendLimInfo.HEAD, FlowerProtoIn_SendLimInfo);
-            
-            NetBus.getInstance().addCallback(FlowerProtoIn_SentInfo.HEAD, onRecvSentInfo);
-            NetBus.getInstance().addCallback(FlowerProtoIn_SendLimInfo.HEAD, onRecvSendLimInfo);
-        }
-        
         private function onFallFlower():void
         {
             var flower:Flower = getUsableFlower();
@@ -168,21 +156,6 @@ package flowersend
                 flower.parent.removeChild(flower);
             
             _flowerPool.push(flower);
-        }
-        
-        
-        
-        // 协议处理
-        
-        private function onRecvSentInfo(inc:FlowerProtoIn_SentInfo):void
-        {
-            //...
-        }
-        
-        private function onRecvSendLimInfo(inc:FlowerProtoIn_SendLimInfo):void
-        {
-            const averageTime:uint = inc.limitCount / inc.duration * 1000;
-            fallFlowers(inc.limitCount, averageTime / 2, averageTime * 1.5);
         }
     }
 }

@@ -166,16 +166,14 @@ package ui
         
         private function onChangePage(e:MouseEvent):void
         {
-            var reqPage:uint = _curShowPage + 1;
-            if (reqPage > _maxPage)
-                reqPage = 1;
+            if (_curShowPage + 1 > _maxPage)
+                _curShowPage = 1;
+            else
+                ++_curShowPage;
             
-            if (reqPage != _curShowPage && reqPage >= 1 && reqPage <= _maxPage)
-            {
-                var reqBlessListProto:BlessProtoOut_ReqBlessList = new BlessProtoOut_ReqBlessList();
-                reqBlessListProto.page = _curShowPage;
-                NetBus.getInstance().send(reqBlessListProto);
-            }
+            var reqBlessListProto:BlessProtoOut_ReqBlessList = new BlessProtoOut_ReqBlessList();
+            reqBlessListProto.page = _curShowPage;
+            NetBus.getInstance().send(reqBlessListProto);
         }
         
         private function onMouseMove(e:MouseEvent):void

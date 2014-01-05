@@ -9,6 +9,8 @@ package flowersend
      */    
     public class FlowerSendEvent extends Event
     {
+        public static const ShowFlowerSendInfoView:String = "FlowerSendEvent.ShowFlowerSendInfoView";
+        
         public static const SentInfoUpdated:String = "FlowerSendEvent.SentInfoUpdated";
         
         

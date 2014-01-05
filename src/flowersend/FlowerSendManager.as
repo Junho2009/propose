@@ -3,6 +3,9 @@ package flowersend
     import commons.buses.InnerEventBus;
     import commons.buses.NetBus;
     import commons.manager.IFlowerSendManager;
+    import commons.manager.ILoginManager;
+    import commons.manager.base.ManagerGlobalName;
+    import commons.manager.base.ManagerHub;
     import commons.protos.ProtoInList;
     
     import mud.protos.FlowerProtoIn_SendLimInfo;
@@ -15,6 +18,8 @@ package flowersend
      */    
     public class FlowerSendManager implements IFlowerSendManager
     {
+        private var _loginMgr:ILoginManager;
+        
         private var _flowerEffect:FlowerEffect;
         
         private var _selfSentNum:uint = 0;
@@ -23,6 +28,8 @@ package flowersend
         
         public function FlowerSendManager()
         {
+            _loginMgr = ManagerHub.getInstance().getManager(ManagerGlobalName.LoginManager) as ILoginManager;
+            
             _flowerEffect = FlowerEffect.getInstance();
             
             ProtoInList.getInstance().bind(FlowerProtoIn_SentInfo.HEAD, FlowerProtoIn_SentInfo);
@@ -48,6 +55,9 @@ package flowersend
         
         private function onRecvSentInfo(inc:FlowerProtoIn_SentInfo):void
         {
+            if (!_loginMgr.isLogined)
+                return;
+            
             if (inc.selfSentNum >= 0)
                 _selfSentNum = inc.selfSentNum;
             _totalSentNum = inc.sentTotal;
@@ -57,6 +67,9 @@ package flowersend
         
         private function onRecvSendLimInfo(inc:FlowerProtoIn_SendLimInfo):void
         {
+            if (!_loginMgr.isLogined)
+                return;
+            
             const averageTime:uint = inc.duration / inc.limitCount * 1000;
             _flowerEffect.fallFlowers(inc.limitCount, averageTime / 2, averageTime * 1.5);
         }

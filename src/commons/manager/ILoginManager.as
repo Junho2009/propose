@@ -9,6 +9,8 @@ package commons.manager
      */    
     public interface ILoginManager extends IManager
     {
+        function get isLogined():Boolean;
+        
         function get userName():String;
     }
 }

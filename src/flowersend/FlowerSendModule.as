@@ -44,7 +44,7 @@ package flowersend
                 // 请求数据
                 NetBus.getInstance().send(new FlowerProtoOut_SentInfo());
                 NetBus.getInstance().send(new FlowerProtoOut_SendLimInfo());
-            }, 32000);
+            }, 10000);
         }
     }
 }

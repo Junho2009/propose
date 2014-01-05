@@ -39,8 +39,8 @@ package ui
             super.init();
             
             var bg:Shape = new Shape();
-            bg.graphics.beginFill(0x868686);
-            bg.graphics.drawRoundRect(0, 0, width, height, 20);
+            bg.graphics.beginFill(0);
+            bg.graphics.drawRoundRect(0, 0, width, height, 10);
             bg.graphics.endFill();
             backgroundImage = bg;
             

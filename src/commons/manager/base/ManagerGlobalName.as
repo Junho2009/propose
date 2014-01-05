@@ -43,6 +43,11 @@ package commons.manager.base
         public static const WindowManager:String = "ManagerGlobalName.WindowManager";
         
         /**
+         * 登录管理器
+         */
+        public static const LoginManager:String = "ManagerGlobalName.LoginManager";
+        
+        /**
          * 声音管理器
          */
         public static const SoundManager:String = "ManagerGlobalName.SoundManager";

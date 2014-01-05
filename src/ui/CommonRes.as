@@ -1,6 +1,7 @@
 package ui
 {
     import flash.display.Bitmap;
+    import flash.display.Sprite;
     import flash.errors.IllegalOperationError;
     import flash.utils.Dictionary;
 
@@ -28,6 +29,11 @@ package ui
         
         [Embed(source = "../../../resources/bless/blesswallrope.png")]
         public var blessWallRope:Class;
+        
+        [Embed(source = "../../../resources/common/input_bg.png"
+            , scaleGridTop = "8", scaleGridLeft = "8", scaleGridRight = "9"
+            , scaleGridBottom = "9")]
+        public var inputBG:Class;
         
         
         private static var _isAllowInstance:Boolean = false;
@@ -64,6 +70,11 @@ package ui
                 _bitmapResDic[resName] = bmpCache;
             }
             return new Bitmap(bmpCache.bitmapData);
+        }
+        
+        public function getSprite(resName:String):Sprite
+        {
+            return Sprite(new this[resName]());
         }
     }
 }

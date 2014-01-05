@@ -17,7 +17,6 @@ package
     import commons.cache.CacheManager;
     import commons.load.FilePath;
     import commons.load.LoadManager;
-    import commons.manager.ISoundManager;
     import commons.manager.IWindowManager;
     import commons.manager.base.ManagerGlobalName;
     import commons.manager.base.ManagerHub;
@@ -25,6 +24,8 @@ package
     import commons.timer.TimerManager;
     
     import flowersend.FlowerSendModule;
+    
+    import login.LoginModule;
     
     import mud.MudModule;
     
@@ -144,7 +145,7 @@ package
             initModules();
             
             var winMgr:IWindowManager = ManagerHub.getInstance().getManager(ManagerGlobalName.WindowManager) as IWindowManager;
-            winMgr.open(WindowGlobalName.HOME_PAGE);
+            winMgr.open(WindowGlobalName.LOGIN_WIN);
             
             // testing
 //            var soundMgr:ISoundManager = ManagerHub.getInstance().getManager(ManagerGlobalName.SoundManager) as ISoundManager;
@@ -159,6 +160,7 @@ package
         private function initModules():void
         {
             _moduleMgr.addModule(new UIModule());
+            _moduleMgr.addModule(new LoginModule());
             _moduleMgr.addModule(new SoundModule());
             _moduleMgr.addModule(new FlowerSendModule());
         }

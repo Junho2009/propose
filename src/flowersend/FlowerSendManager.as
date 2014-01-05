@@ -7,8 +7,6 @@ package flowersend
     
     import mud.protos.FlowerProtoIn_SendLimInfo;
     import mud.protos.FlowerProtoIn_SentInfo;
-    import mud.protos.FlowerProtoOut_SendLimInfo;
-    import mud.protos.FlowerProtoOut_SentInfo;
     
     /**
      * 鲜花赠送管理器
@@ -32,10 +30,6 @@ package flowersend
             
             NetBus.getInstance().addCallback(FlowerProtoIn_SentInfo.HEAD, onRecvSentInfo);
             NetBus.getInstance().addCallback(FlowerProtoIn_SendLimInfo.HEAD, onRecvSendLimInfo);
-            
-            // 请求数据
-            NetBus.getInstance().send(new FlowerProtoOut_SentInfo());
-            NetBus.getInstance().send(new FlowerProtoOut_SendLimInfo());
         }
         
         public function get selfSentNum():uint

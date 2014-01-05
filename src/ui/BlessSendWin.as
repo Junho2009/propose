@@ -12,6 +12,7 @@ package ui
     import commons.MathUtil;
     import commons.buses.InnerEventBus;
     import commons.buses.NetBus;
+    import commons.manager.ILoginManager;
     import commons.manager.ITimerManager;
     import commons.manager.base.ManagerGlobalName;
     import commons.manager.base.ManagerHub;
@@ -30,6 +31,7 @@ package ui
     public class BlessSendWin extends WindowBase implements IWindow
     {
         private var _timeMgr:ITimerManager;
+        private var _loginMgr:ILoginManager;
         
         private var _content:GixTipsInput;
         private var _authorNameLabel:GixText;
@@ -45,6 +47,7 @@ package ui
             super("BlessSendWin");
             
             _timeMgr = ManagerHub.getInstance().getManager(ManagerGlobalName.TimerManager) as ITimerManager;
+            _loginMgr = ManagerHub.getInstance().getManager(ManagerGlobalName.LoginManager) as ILoginManager;
             
             _content = new GixTipsInput();
             _authorNameLabel = new GixText();
@@ -105,6 +108,9 @@ package ui
         
         override protected function onWindowOpened(e:Event):void
         {
+            if ("" != _loginMgr.userName)
+                _authorName.text = _loginMgr.userName;
+            
             _sendBtn.callback = onSend;
             
             x = 20;

@@ -3,7 +3,7 @@ package mud.protos
     import mud.protos.base.MudProtoOut;
     
     /**
-     * 送祝福协议
+     * 祝福输出协议-送祝福
      * @author junho
      * <br/>Create: 2013.12.08
      */

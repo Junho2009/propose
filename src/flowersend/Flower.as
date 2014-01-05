@@ -1,4 +1,4 @@
-package effect
+package flowersend
 {
     import flash.display.MovieClip;
     import flash.display.Sprite;

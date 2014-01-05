@@ -19,7 +19,7 @@ package sound
         
         public function get name():String
         {
-            return "";
+            return "SoundModule";
         }
     }
 }

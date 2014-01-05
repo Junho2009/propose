@@ -10,6 +10,7 @@ package ui
     
     import commons.GlobalContext;
     import commons.MathUtil;
+    import commons.buses.InnerEventBus;
     import commons.buses.NetBus;
     import commons.manager.ITimerManager;
     import commons.manager.base.ManagerGlobalName;
@@ -18,7 +19,6 @@ package ui
     
     import mud.protos.BlessProtoOut_SendBless;
     
-    import webgame.core.bus.UIBus;
     import webgame.ui.GixButton;
     import webgame.ui.GixText;
     
@@ -110,13 +110,13 @@ package ui
             x = 20;
             y = GlobalContext.getInstance().stage.stageHeight - height >> 1;
             
-            UIBus.getInstance().addEventListener(BlessEvent.AddSelfBlessToWall, onAddSelfBlessToWall);
+            InnerEventBus.getInstance().addEventListener(BlessEvent.AddSelfBlessToWall, onAddSelfBlessToWall);
         }
         
         override protected function onWindowClosed(e:Event):void
         {
             _sendBtn.callback = null;
-            UIBus.getInstance().removeEventListener(BlessEvent.AddSelfBlessToWall, onAddSelfBlessToWall);
+            InnerEventBus.getInstance().removeEventListener(BlessEvent.AddSelfBlessToWall, onAddSelfBlessToWall);
         }
         
         
@@ -150,7 +150,7 @@ package ui
                 blessData["time"] = (new Date()).getTime() / 1000;
                 var blessVO:BlessVO = new BlessVO(blessData);
                 
-                UIBus.getInstance().dispatchEvent(new BlessEvent(BlessEvent.ReqAddSelfBlessToWall
+                InnerEventBus.getInstance().dispatchEvent(new BlessEvent(BlessEvent.ReqAddSelfBlessToWall
                     , {blessVO: blessVO, paperType: _paperType}));
             };
             Tweener.addTween(this, params);

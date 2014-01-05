@@ -4,7 +4,6 @@ package
     import flash.events.Event;
     import flash.events.IOErrorEvent;
     import flash.external.ExternalInterface;
-    import flash.net.Socket;
     import flash.system.Security;
     
     import mx.utils.StringUtil;
@@ -25,6 +24,8 @@ package
     import commons.module.ModuleManager;
     import commons.timer.TimerManager;
     
+    import flowersend.FlowerSendModule;
+    
     import mud.MudModule;
     
     import sound.SoundModule;
@@ -43,7 +44,8 @@ package
     public class Launcher extends Sprite
     {
         private var _context:commons.GlobalContext = commons.GlobalContext.getInstance();
-        private var _socket:Socket;
+        private var _socket:MySocket;
+        private var _moduleMgr:ModuleManager;
 
 
         public function Launcher()
@@ -87,7 +89,7 @@ package
         private function initLauncher():void
         {
             initExternalModules();
-            initModules();
+            initCommonMgrs();
             initSocket();
             initBuses();
         }
@@ -97,13 +99,15 @@ package
             commons.GlobalContext.init(this);
         }
         
-        private function initModules():void
+        private function initCommonMgrs():void
         {
+            _moduleMgr = new ModuleManager();
+            ManagerHub.getInstance().register(ManagerGlobalName.ModuleManager, _moduleMgr);
+            
+            _moduleMgr.addModule(new MudModule());
+            
             var timerMgr:TimerManager = new TimerManager();
             ManagerHub.getInstance().register(ManagerGlobalName.TimerManager, timerMgr);
-            
-            var moduleMgr:ModuleManager = new ModuleManager();
-            ManagerHub.getInstance().register(ManagerGlobalName.ModuleManager, moduleMgr);
             
             var cacheMgr:CacheManager = new CacheManager();
             ManagerHub.getInstance().register(ManagerGlobalName.CacheManager, cacheMgr);
@@ -113,16 +117,6 @@ package
             
             var animMgr:AnimManager = new AnimManager();
             ManagerHub.getInstance().register(ManagerGlobalName.AnimManager, animMgr);
-            
-            moduleMgr.addModule(new MudModule());
-            moduleMgr.addModule(new UIModule());
-            moduleMgr.addModule(new SoundModule());
-            
-//            FlowerEffect.getInstance().fallFlowers(50000);
-            
-//            //testing
-            var soundMgr:ISoundManager = ManagerHub.getInstance().getManager(ManagerGlobalName.SoundManager) as ISoundManager;
-            soundMgr.play(FilePath.root+"music/1.mp3", true);
         }
         
         private function initSocket():void
@@ -147,35 +141,26 @@ package
             trace("socket连接成功");
             
             launcherSupportsLib();
+            initModules();
             
             var winMgr:IWindowManager = ManagerHub.getInstance().getManager(ManagerGlobalName.WindowManager) as IWindowManager;
             winMgr.open(WindowGlobalName.HOME_PAGE);
+            
+            // testing
+//            var soundMgr:ISoundManager = ManagerHub.getInstance().getManager(ManagerGlobalName.SoundManager) as ISoundManager;
+//            soundMgr.play(FilePath.root+"music/1.mp3", true);
         }
         
         private function launcherSupportsLib():void
         {
             webgame.core.GlobalContext.init(this);
-            
-            //testing
-            /*var btn:GixButton = new GixButton();
-            btn.init();
-            btn.width = 300;
-            btn.height = 200;
-            btn.addEventListener(MouseEvent.CLICK, function(e:MouseEvent):void
-            {
-//                var proto:BlessProtoOut_SendBless = new BlessProtoOut_SendBless();
-//                proto.name = "俊壕、海霞的朋友"+Math.random().toString();
-//                proto.msg = "我们\n发来\n贺电~~这是;测试#特殊,字符:的内容~";
-//                NetBus.getInstance().send(proto);
-                
-//                var proto:BlessProtoOut_ReqBlessList = new BlessProtoOut_ReqBlessList();
-//                proto.page = 1;
-//                NetBus.getInstance().send(proto);
-                
-//                var proto:BlessProtoOut_ReqBlessInfo = new BlessProtoOut_ReqBlessInfo();
-//                NetBus.getInstance().send(proto);
-            });
-            GlobalLayers.getInstance().windowLayer.addChild(btn);*/
+        }
+        
+        private function initModules():void
+        {
+            _moduleMgr.addModule(new UIModule());
+            _moduleMgr.addModule(new SoundModule());
+            _moduleMgr.addModule(new FlowerSendModule());
         }
         
         private function onClose(e:Event):void

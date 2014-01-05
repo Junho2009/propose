@@ -1,4 +1,4 @@
-package effect
+package flowersend
 {
     import flash.events.Event;
     
@@ -7,7 +7,7 @@ package effect
      * @author junho
      * <br/>Create: 2013.12.21
      */    
-    public class FlowerEffectEvent extends Event
+    internal class FlowerEffectEvent extends Event
     {
         public static const FlowerClicked:String = "FlowerEffectEvent.FlowerClicked";
         

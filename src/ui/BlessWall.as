@@ -9,6 +9,7 @@ package ui
     
     import commons.GlobalContext;
     import commons.MathUtil;
+    import commons.buses.InnerEventBus;
     import commons.buses.NetBus;
     import commons.load.FilePath;
     import commons.load.LoadRequestInfo;
@@ -23,7 +24,6 @@ package ui
     import mud.protos.BlessProtoOut_ReqBlessInfo;
     import mud.protos.BlessProtoOut_ReqBlessList;
     
-    import webgame.core.bus.UIBus;
     import webgame.ui.GixButton;
     import webgame.ui.View;
     import webgame.ui.Widget;
@@ -114,12 +114,12 @@ package ui
         
         private function onAddedToStage(e:Event):void
         {
-            UIBus.getInstance().addEventListener(BlessEvent.ReqAddSelfBlessToWall, onReqAddSelfBlessToWall);
+            InnerEventBus.getInstance().addEventListener(BlessEvent.ReqAddSelfBlessToWall, onReqAddSelfBlessToWall);
         }
         
         private function onRemovedFromStage(e:Event):void
         {
-            UIBus.getInstance().removeEventListener(BlessEvent.ReqAddSelfBlessToWall, onReqAddSelfBlessToWall);
+            InnerEventBus.getInstance().removeEventListener(BlessEvent.ReqAddSelfBlessToWall, onReqAddSelfBlessToWall);
         }
         
         private function onBGLoaded(img:Bitmap):void
@@ -355,7 +355,7 @@ package ui
             };
             
             var gPos:Point = _blessContentLayer.localToGlobal(pos);
-            UIBus.getInstance().dispatchEvent(new BlessEvent(BlessEvent.AddSelfBlessToWall
+            InnerEventBus.getInstance().dispatchEvent(new BlessEvent(BlessEvent.AddSelfBlessToWall
                 , {pos: gPos, callback: handleCallback}));
         }
     }

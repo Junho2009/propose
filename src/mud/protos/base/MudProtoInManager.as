@@ -8,9 +8,6 @@ package mud.protos.base
     import commons.protos.ProtoInList;
     
     import mud.MudUtil;
-    import mud.protos.BlessProtoIn;
-    import mud.protos.BlessProtoIn_BlessList;
-    import mud.protos.TestProtoIn;
     
     /**
      * mud版输入协议的管理器

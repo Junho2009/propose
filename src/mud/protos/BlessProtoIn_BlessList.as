@@ -5,7 +5,7 @@ package mud.protos
     import mud.protos.base.MudProtoIn;
     
     /**
-     * 请求祝福列表的结果返回协议
+     * 祝福输入协议-祝福列表数据
      * @author junho
      * <br/>Create: 2013.12.23
      */    

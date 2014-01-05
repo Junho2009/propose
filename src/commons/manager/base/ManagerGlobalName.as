@@ -46,5 +46,10 @@ package commons.manager.base
          * 声音管理器
          */
         public static const SoundManager:String = "ManagerGlobalName.SoundManager";
+        
+        /**
+         * 鲜花赠送管理器
+         */
+        public static const FlowerSendManager:String = "ManagerGlobalName.FlowerSendManager";
     }
 }

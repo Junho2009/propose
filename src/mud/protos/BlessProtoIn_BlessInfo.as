@@ -3,7 +3,7 @@ package mud.protos
     import mud.protos.base.MudProtoIn;
     
     /**
-     * 请求祝福数据信息的返回协议
+     * 祝福输入协议-祝福数据信息
      * @author junho
      * <br/>Create: 2013.12.26
      */    

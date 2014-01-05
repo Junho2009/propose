@@ -7,6 +7,8 @@ package mud
      */    
     public class MudUtil
     {
+        private static const _MudPackagedDataDelimiterRegExp:RegExp = new RegExp("\\s*>\\s*", "g");
+        
         /**
          * 协议之间的分隔符
          */        
@@ -161,6 +163,7 @@ package mud
         {
             return (0 == rawStr.search(_ProtoInStrHeadRegExp));
         }
+        
         /**
          * 将原生字符串转换为输入协议（字符串）列表
          * @param rawStr:String
@@ -169,6 +172,7 @@ package mud
          */        
         public static function toDecode_ProtoInStrList(rawStr:String):Array
         {
+            rawStr = rawStr.replace(_MudPackagedDataDelimiterRegExp, "\n");
             var protoInStrList:Array = rawStr.split(_ProtoDelimiter);
             
             const protoInStrListLen:uint = protoInStrList.length;

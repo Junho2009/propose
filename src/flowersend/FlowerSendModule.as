@@ -35,6 +35,8 @@ package flowersend
         
         private function onLogined(e:LoginEvent):void
         {
+            InnerEventBus.getInstance().removeEventListener(LoginEvent.LoginSuccessfully, onLogined);
+            
             var tm:ITimerManager = ManagerHub.getInstance().getManager(ManagerGlobalName.TimerManager) as ITimerManager;
             tm.setTask(function():void
             {

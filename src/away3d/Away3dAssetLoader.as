@@ -1,6 +1,10 @@
 package away3d
 {
+    import flash.display.Bitmap;
+    import flash.display.BitmapData;
     import flash.errors.IllegalOperationError;
+    import flash.geom.Point;
+    import flash.geom.Rectangle;
     import flash.utils.ByteArray;
     import flash.utils.Dictionary;
     
@@ -12,6 +16,8 @@ package away3d
     import away3d.events.LoaderEvent;
     import away3d.library.AssetLibrary;
     import away3d.library.assets.AssetType;
+    import away3d.textures.BitmapTexture;
+    import away3d.tools.utils.TextureUtils;
     
     import commons.load.FilePath;
     import commons.load.LoadRequestInfo;
@@ -26,7 +32,12 @@ package away3d
      */    
     public class Away3dAssetLoader
     {
+        public static const TexAlign_Center:String = "center";
+        public static const TexAlign_LeftTop:String = "lefttop";
+        
+        
         private static const AssetType_Particle:String = "PARTICLE";
+        private static const AssetType_Texture:String = "TEXTURE";
         
         private static var _allowInstance:Boolean = false;
         private static var _instance:Away3dAssetLoader = null;
@@ -86,9 +97,34 @@ package away3d
             }
             else
             {
-                var particleReq:LoadRequestInfo = reqInfo.clone();
-                particleReq.param = {type: AssetType_Particle};
-                _reqInfoList.push(particleReq);
+                var req:LoadRequestInfo = reqInfo.clone();
+                req.param = {type: AssetType_Particle};
+                _reqInfoList.push(req);
+                handleReq();
+            }
+        }
+        
+        public function reqTexture(reqInfo:LoadRequestInfo):void
+        {
+            var assetName:String = genAssetKey(AssetType_Texture, reqInfo.url);
+            const bCached:Boolean = _cacheFlagDic[assetName];
+            if (bCached)
+            {
+                var texture:BitmapTexture = AssetLibrary.getAsset(assetName) as BitmapTexture;
+                
+                if (null != reqInfo.completedCallback)
+                {
+                    if (null == reqInfo.completedCallbackData)
+                        reqInfo.completedCallback.apply(this, [texture]);
+                    else
+                        reqInfo.completedCallback.apply(this, [texture, _curHandlingReq.completedCallbackData]);
+                }
+            }
+            else
+            {
+                var req:LoadRequestInfo = reqInfo.clone();
+                req.param = {type: AssetType_Texture, orgParam: reqInfo.param};
+                _reqInfoList.push(req);
                 handleReq();
             }
         }
@@ -108,12 +144,22 @@ package away3d
             _loadMgr.load(req);
         }
         
+        private function handleNextReq():void
+        {
+            _curHandlingReq.dispose();
+            _curHandlingReq = null;
+            handleReq();
+        }
+        
         private function getLoadedCallbackByType(type:String):Function
         {
             switch (type)
             {
                 case AssetType_Particle:
                     return onParticleFileLoaded;
+                    
+                case AssetType_Texture:
+                    return onTextureImgLoaded;
                     
                 default:
                     return null;
@@ -123,6 +169,64 @@ package away3d
         private function onParticleFileLoaded(data:ByteArray):void
         {
             AssetLibrary.loadData(data, null, null, new FixedUrlParticleGroupParser());
+        }
+        
+        private function onTextureImgLoaded(bitmap:Bitmap):void
+        {
+            var align:String = TexAlign_Center;
+            if (null != _curHandlingReq.param.orgParam && _curHandlingReq.param.orgParam.hasOwnProperty("align"))
+                align = _curHandlingReq.param.orgParam.align;
+            
+            var bd:BitmapData = genPower2BitmapData(bitmap.bitmapData, align);
+            var texture:BitmapTexture = new BitmapTexture(bd);
+            
+            cacheTexture(texture, _curHandlingReq.url);
+            
+            if (null != _curHandlingReq.completedCallback)
+            {
+                if (null == _curHandlingReq.completedCallbackData)
+                    _curHandlingReq.completedCallback.apply(this, [texture]);
+                else
+                    _curHandlingReq.completedCallback.apply(this, [texture, _curHandlingReq.completedCallbackData]);
+            }
+            
+            handleNextReq();
+        }
+        
+        private static function genPower2BitmapData(source:BitmapData, align:String):BitmapData
+        {
+            var bNeedToRecreateBD:Boolean = false;
+            
+            var w:uint = source.width;
+            var h:uint = source.height;
+            
+            if (!TextureUtils.isPowerOfTwo(w))
+            {
+                w = TextureUtils.getBestPowerOf2(w);
+                bNeedToRecreateBD = true;
+            }
+            if (!TextureUtils.isPowerOfTwo(h))
+            {
+                h = TextureUtils.getBestPowerOf2(h);
+                bNeedToRecreateBD = true;
+            }
+            
+            if (!bNeedToRecreateBD)
+                return source;
+            
+            var destPoint:Point = null;
+            if ("center" == align)
+                destPoint = new Point(w - source.width >> 1, h - source.height >> 1);
+            else if ("lefttop" == align)
+                destPoint = new Point(0, 0);
+            else if ("centertop" == align)
+                destPoint = new Point(w - source.width >> 1, 0);
+            else // 预留
+                destPoint = new Point(w - source.width >> 1, h - source.height >> 1);
+            
+            var bd:BitmapData = new BitmapData(w, h, true, 0x00000000);
+            bd.copyPixels(source, new Rectangle(0, 0, source.width, source.height), destPoint);
+            return bd;
         }
         
         private function onAssetCompleted(e:AssetEvent):void
@@ -163,6 +267,14 @@ package away3d
             var assetName:String = genAssetKey(AssetType_Particle, url);
             particle.name = assetName;
             AssetLibrary.addAsset(particle);
+            _cacheFlagDic[assetName] = true;
+        }
+        
+        private function cacheTexture(texture:BitmapTexture, url:String):void
+        {
+            var assetName:String = genAssetKey(AssetType_Texture, url);
+            texture.name = assetName;
+            AssetLibrary.addAsset(texture);
             _cacheFlagDic[assetName] = true;
         }
     }

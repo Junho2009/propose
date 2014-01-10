@@ -85,6 +85,7 @@ package commons.load
             req.failCallbackData = this.failCallbackData;
             req.singleCompCallback = this.singleCompCallback;
             req.isNeetToRetry = this.isNeetToRetry;
+            req.param = this.param;
             
             return req;
         }

@@ -55,6 +55,7 @@ package ui
             addChild(_msg);
             
             _okBtn.init();
+            _okBtn.bindSkin(CommonRes.getInstance().createButtonSkin(1));
             _okBtn.width = 60;
             _okBtn.height = 25;
             _okBtn.label = "确定";

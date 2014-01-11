@@ -28,6 +28,11 @@ package commons.manager.base
         public static const LoadManager:String = "ManagerGlobalName.LoadManager";
         
         /**
+         * 通知管理器
+         */        
+        public static const NotifyManager:String = "ManagerGlobalName.NotifyManager";
+        
+        /**
          * 动画管理器
          */        
         public static const AnimManager:String = "ManagerGlobalName.AnimManager";

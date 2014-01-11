@@ -31,6 +31,8 @@ package
     
     import mud.MudModule;
     
+    import notice.NotifyManager;
+    
     import sound.SoundModule;
     
     import ui.UIModule;
@@ -117,6 +119,9 @@ package
             
             var loadMgr:LoadManager = new LoadManager();
             ManagerHub.getInstance().register(ManagerGlobalName.LoadManager, loadMgr);
+            
+            var notifyMgr:NotifyManager = new NotifyManager();
+            ManagerHub.getInstance().register(ManagerGlobalName.NotifyManager, notifyMgr);
             
             var animMgr:AnimManager = new AnimManager();
             ManagerHub.getInstance().register(ManagerGlobalName.AnimManager, animMgr);

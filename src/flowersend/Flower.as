@@ -43,6 +43,11 @@ package flowersend
             addEventListener(MouseEvent.MOUSE_DOWN, onClick);
         }
         
+        public function init():void
+        {
+            disposeFlowerMC();
+        }
+        
         public function set type(value:uint):void
         {
             if (value == _type)
@@ -76,6 +81,8 @@ package flowersend
             params.time = (targetY - y) / _speed;
             params.transition = "linear";
             params.onComplete = onTouchDown;
+            
+            Tweener.removeTweens(this);
             Tweener.addTween(this, params);
         }
         
@@ -91,7 +98,8 @@ package flowersend
             Tweener.removeTweens(this);
             
             var params:Object = new Object();
-            params.y = y - 50;
+            params.x = GlobalContext.getInstance().stage.stageWidth - this.width >> 1;
+            params.y = GlobalContext.getInstance().stage.stageHeight - this.height - 10;
             params.alpha = 0;
             params.time = 0.5;
             params.transition = "linear";
@@ -99,6 +107,8 @@ package flowersend
             {
                 InnerEventBus.getInstance().dispatchEvent(new FlowerEffectEvent(FlowerEffectEvent.FlowerClicked, this));
             };
+            
+            Tweener.removeTweens(this);
             Tweener.addTween(this, params);
         }
         

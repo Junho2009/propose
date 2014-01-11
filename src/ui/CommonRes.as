@@ -4,6 +4,10 @@ package ui
     import flash.display.Sprite;
     import flash.errors.IllegalOperationError;
     import flash.utils.Dictionary;
+    
+    import mx.utils.StringUtil;
+    
+    import webgame.ui.Skin;
 
     /**
      * 公共资源
@@ -34,6 +38,24 @@ package ui
             , scaleGridTop = "8", scaleGridLeft = "8", scaleGridRight = "9"
             , scaleGridBottom = "9")]
         public var inputBG:Class;
+        
+        
+        [Embed(source = "../../../resources/common/button1/up.png"
+            , scaleGridLeft = "6", scaleGridRight = "7", scaleGridTop = "7"
+            , scaleGridBottom = "8")]
+        public var button1_up:Class;
+        [Embed(source = "../../../resources/common/button1/over.png"
+            , scaleGridLeft = "6", scaleGridRight = "7", scaleGridTop = "7"
+            , scaleGridBottom = "8")]
+        public var button1_over:Class;
+        [Embed(source = "../../../resources/common/button1/down.png"
+            , scaleGridLeft = "6", scaleGridRight = "7", scaleGridTop = "7"
+            , scaleGridBottom = "8")]
+        public var button1_down:Class;
+        [Embed(source = "../../../resources/common/button1/disable.png"
+            , scaleGridLeft = "6", scaleGridRight = "7", scaleGridTop = "7"
+            , scaleGridBottom = "8")]
+        public var button1_disable:Class;
         
         
         private static var _isAllowInstance:Boolean = false;
@@ -75,6 +97,24 @@ package ui
         public function getSprite(resName:String):Sprite
         {
             return Sprite(new this[resName]());
+        }
+        
+        public function createButtonSkin(type:uint):Skin
+        {
+            var btnName:String = StringUtil.substitute("button{0}", type);
+            
+            var skin:Skin = new Skin(btnName, "button");
+            
+            skin.setAppearance("upSkin", getSprite(btnName + "_up"));
+            skin.setAppearance("overSkin", getSprite(btnName + "_over"));
+            skin.setAppearance("downSkin", getSprite(btnName + "_down"));
+            skin.setAppearance("disabledSkin", getSprite(btnName + "_disable"));
+            skin.setAppearance("selectedUpSkin", getSprite(btnName + "_down"));
+            skin.setAppearance("selectedOverSkin", getSprite(btnName + "_down"));
+            skin.setAppearance("selectedDownSkin", getSprite(btnName + "_down"));
+            skin.setAppearance("selectedDisabledSkin", getSprite(btnName + "_down"));
+            
+            return skin;
         }
     }
 }

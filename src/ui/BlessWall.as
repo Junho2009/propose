@@ -88,6 +88,7 @@ package ui
             _blessContentLayer.addEventListener(MouseEvent.MOUSE_DOWN, onBlessContentLayerMouseDown);
             
             _changePageBtn.init();
+            _changePageBtn.bindSkin(CommonRes.getInstance().createButtonSkin(1));
             _changePageBtn.width = 120;
             _changePageBtn.height = 30;
             _changePageBtn.label = "看看其他祝福";

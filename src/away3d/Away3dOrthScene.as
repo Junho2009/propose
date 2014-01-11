@@ -126,7 +126,7 @@ package away3d
         {
             InnerEventBus.getInstance().removeEventListener(LoginEvent.LoginSuccessfully, onLogined);
             
-            _curShowBGNo = MathUtil.randomInt(0, _BGCount);
+            _curShowBGNo = MathUtil.randomInt(0, _BGCount-1);
             changeBG();
         }
         

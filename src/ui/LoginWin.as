@@ -5,6 +5,7 @@ package ui
     import flash.text.TextFormatAlign;
     import flash.ui.Keyboard;
     
+    import commons.GlobalContext;
     import commons.buses.NetBus;
     
     import mud.protos.LoginProtoOut_Login;
@@ -76,6 +77,12 @@ package ui
         {
             _input.removeEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
             _okBtn.callback = null;
+        }
+        
+        override protected function onStageResize(e:Event):void
+        {
+            x = GlobalContext.getInstance().stage.stageWidth - width >> 1;
+            y = GlobalContext.getInstance().stage.stageHeight - height >> 1;
         }
         
         private function onKeyDown(e:KeyboardEvent):void

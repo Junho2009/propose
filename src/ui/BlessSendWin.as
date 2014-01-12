@@ -111,7 +111,7 @@ package ui
         override protected function onWindowOpened(e:Event):void
         {
             if ("" != _loginMgr.userName)
-                _authorName.text = _loginMgr.userName;
+                _authorName.content = _loginMgr.userName;
             
             _content.addEventListener(Event.CHANGE, onContentChanged);
             _sendBtn.callback = onSend;

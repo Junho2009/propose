@@ -101,7 +101,7 @@ package ui
         
         private function updateContent():void
         {
-            _content.x = 15;
+            _content.x = 10;
             _content.y = 50;
             _content.width = width - _content.x*2;
             _content.height = 80;

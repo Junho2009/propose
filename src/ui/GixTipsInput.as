@@ -55,6 +55,14 @@ package ui
             try2UpdateTextByTips();
         }
         
+        public function set content(value:String):void
+        {
+            _content = value;
+            textField.text = value;
+            _bHasContent = true;
+            updateStatus();
+        }
+        
         
         
         override protected function onFocusIn(e:FocusEvent):void

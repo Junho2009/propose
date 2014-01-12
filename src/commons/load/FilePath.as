@@ -16,6 +16,7 @@ package commons.load
         private static var _effect3dPath:String = _root + "effect3d/";
         private static var _effect3dTexPath:String = _root + "effect3d/texture/";
         private static var _musicPath:String = _root + "music/";
+        private static var _thankfulPath:String = _root + "thankful/";
         
         
         
@@ -26,6 +27,7 @@ package commons.load
             _effect3dPath = _root + "effect3d/";
             _effect3dTexPath = _root + "effect3d/texture/";
             _musicPath = _root + "music/";
+            _thankfulPath = _root + "thankful/";
         }
         
         public static function trimRoot(url:String):String
@@ -75,6 +77,11 @@ package commons.load
         public static function get musicPath():String
         {
             return _musicPath;
+        }
+        
+        public static function get thankfulPath():String
+        {
+            return _thankfulPath;
         }
     }
 }

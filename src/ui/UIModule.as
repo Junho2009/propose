@@ -37,6 +37,7 @@ package ui
             _winMgr.register(WindowGlobalName.BLESS_SEND, BlessSendWin);
             _winMgr.register(WindowGlobalName.HOME_PAGE, HomePageWin);
             _winMgr.register(WindowGlobalName.LOGIN_WIN, LoginWin);
+            _winMgr.register(WindowGlobalName.THANKFUL, ThankfulWin);
         }
         
         private function onNofity(inc:MsgProtoIn_Nofify):void

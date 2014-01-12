@@ -28,8 +28,8 @@ package ui
         [Embed(source = "../../../resources/bless/paper4.png")]
         public var blessPaper4:Class;
         
-//        [Embed(source = "../../../resources/bless/closebtn.png")]
-//        public var blessPaperCloseBtn:Class;
+        [Embed(source = "../../../resources/bless/closebtn.png")]
+        public var closeBtn:Class;
         
         [Embed(source = "../../../resources/bless/blesswallrope.png")]
         public var blessWallRope:Class;
@@ -56,6 +56,10 @@ package ui
             , scaleGridLeft = "6", scaleGridRight = "7", scaleGridTop = "7"
             , scaleGridBottom = "8")]
         public var button1_disable:Class;
+        
+        
+        [Embed(source = "thankful.data", mimeType = "application/octet-stream")]
+        public var thankfulData:Class;
         
         
         private static var _isAllowInstance:Boolean = false;
@@ -115,6 +119,11 @@ package ui
             skin.setAppearance("selectedDisabledSkin", getSprite(btnName + "_down"));
             
             return skin;
+        }
+        
+        public function getJObj(name:String):Object
+        {
+            return JSON.parse((new this[name]()).toString());
         }
     }
 }

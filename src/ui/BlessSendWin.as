@@ -30,6 +30,8 @@ package ui
      */    
     public class BlessSendWin extends WindowBase implements IWindow
     {
+        private static const _ContentMaxLines:uint = 3;
+        
         private var _timeMgr:ITimerManager;
         private var _loginMgr:ILoginManager;
         
@@ -111,6 +113,7 @@ package ui
             if ("" != _loginMgr.userName)
                 _authorName.text = _loginMgr.userName;
             
+            _content.addEventListener(Event.CHANGE, onContentChanged);
             _sendBtn.callback = onSend;
             
             x = 20;
@@ -121,6 +124,7 @@ package ui
         
         override protected function onWindowClosed(e:Event):void
         {
+            _content.removeEventListener(Event.CHANGE, onContentChanged);
             _sendBtn.callback = null;
             InnerEventBus.getInstance().removeEventListener(BlessEvent.AddSelfBlessToWall, onAddSelfBlessToWall);
         }
@@ -222,6 +226,22 @@ package ui
         private function onFadeIn():void
         {
             _timeMgr.setTask(fadeIn, 1000, false);
+        }
+        
+        private function onContentChanged(e:Event):void
+        {
+            if (_content.textField.numLines > _ContentMaxLines)
+            {
+                var validLen:uint = 0;
+                for (var i:int = 0; i < _ContentMaxLines; ++i)
+                {
+                    validLen += _content.textField.getLineLength(i);
+                }
+                
+                if (_content.text.charAt(validLen-1) == "\r")
+                    --validLen;
+                _content.text = _content.text.slice(0, validLen);
+            }
         }
     }
 }

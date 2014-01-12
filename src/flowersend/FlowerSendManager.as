@@ -86,7 +86,7 @@ package flowersend
             
             if (_bFirstTime && 0 == _selfSentNum)
             {
-                _wm.open(WindowGlobalName.MSG_BOX, null, "点击飘下来的花瓣，可以给我们赠花哦！");
+                _wm.open(WindowGlobalName.MSG_BOX, null, "点击飘下来的花瓣，可以给我们赠花哦！\np.s.: 每到一定的送花数量，会出现更浪漫的花雨哦~~");
                 _bFirstTime = false;
             }
         }

@@ -57,9 +57,11 @@ package flowersend
             
             disposeFlowerMC();
             
+            var url:String = StringUtil.substitute("{0}{1}.swf", FilePath.flowerPath, value);
             var reqInfo:LoadRequestInfo = new LoadRequestInfo();
-            reqInfo.url = StringUtil.substitute("{0}{1}.swf", FilePath.flowerPath, value);
+            reqInfo.url = url;
             reqInfo.completedCallback = onFlowerLoaded;
+            reqInfo.completedCallbackData = url;
             _loadMgr.load(reqInfo);
         }
         
@@ -88,6 +90,7 @@ package flowersend
         
         public function dispose():void
         {
+            Tweener.removeTweens(this);
             disposeFlowerMC();
         }
         
@@ -112,9 +115,9 @@ package flowersend
             Tweener.addTween(this, params);
         }
         
-        private function onFlowerLoaded(mc:MovieClip):void
+        private function onFlowerLoaded(mc:MovieClip, url:String):void
         {
-            _flowerMC = _animMgr.createAnim(AnimType.BitmapMC, mc) as BitmapMC;
+            _flowerMC = _animMgr.createAnim(AnimType.BitmapMC, mc, url) as BitmapMC;
             _animMgr.addAnim(_flowerMC);
             _flowerMC.fps = 15;
             _flowerMC.isLoop = true;

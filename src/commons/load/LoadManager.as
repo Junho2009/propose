@@ -6,10 +6,11 @@ package commons.load
     import mx.utils.StringUtil;
     
     import commons.debug.Debug;
+    import commons.manager.ICacheManager;
+    import commons.manager.ILoadManager;
+    import commons.manager.ITimerManager;
     import commons.manager.base.ManagerGlobalName;
     import commons.manager.base.ManagerHub;
-    import commons.manager.ITimerManager;
-    import commons.manager.ILoadManager;
 
     /**
      * 加载管理器
@@ -23,6 +24,7 @@ package commons.load
         private static const _RETRY_READY_SEC:uint = 5; // 重试前的等待时间
         
         private var _tm:ITimerManager;
+        private var _cacheMgr:ICacheManager;
         
         private var _loaderPool:Vector.<MyLoader>;
         
@@ -40,6 +42,7 @@ package commons.load
         public function LoadManager()
         {
             _tm = ManagerHub.getInstance().getManager(ManagerGlobalName.TimerManager) as ITimerManager;
+            _cacheMgr = ManagerHub.getInstance().getManager(ManagerGlobalName.CacheManager) as ICacheManager;
             
             var i:int = 0;
             
@@ -231,6 +234,8 @@ package commons.load
         
         private function onLoadCompleted_SingleFile(e:MyLoaderEvent):void
         {
+            _cacheMgr.addData(e.rawData, e.url);
+            
             var trimUrl:String = FilePath.trimRoot(e.url);
             var reqList:Vector.<LoadRequestInfo> = _reqListDic[trimUrl] as Vector.<LoadRequestInfo>;
             var i:int = 0;
@@ -516,7 +521,16 @@ package commons.load
                     reqList.push(reqInfo);
                     
                     _runningLoaderDic[reqInfo.trimUrl] = loader;
-                    loader.load(url);
+                    
+                    var cache:* = _cacheMgr.getData(url);
+                    if (null != cache)
+                    {
+                        loader.loadCache(url, cache);
+                    }
+                    else
+                    {
+                        loader.load(url);
+                    }
                 }
                 else
                 {

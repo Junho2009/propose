@@ -23,7 +23,7 @@ package flowersend
      */    
     public class FlowerSendInfoView extends View
     {
-        private static const _W:Number = 300;
+        private static const _W:Number = 500;
         private static const _H:Number = 60;
         
         private var _flowerSendMgr:IFlowerSendManager;
@@ -60,7 +60,7 @@ package flowersend
             _selfSentNum.color = 0xffea00;
             _selfSentNum.align = TextFormatAlign.CENTER;
 //            _selfSentNum.filters = [new GlowFilter(0xa78829, 1.0, 6.0, 6.0, 6)];
-            _selfSentNum.width = 200;
+            _selfSentNum.width = _W;
             _selfSentNum.height = 25;
             _selfSentNum.y = 5;
             addChild(_selfSentNum);
@@ -70,7 +70,7 @@ package flowersend
             _sentTotal.color = 0xffea00;
             _sentTotal.align = TextFormatAlign.CENTER;
 //            _sentTotal.filters = [new GlowFilter(0xa78829, 1.0, 6.0, 6.0, 6)];
-            _sentTotal.width = 200;
+            _sentTotal.width = _W;
             _sentTotal.height = 25;
             _sentTotal.y = _selfSentNum.y + _selfSentNum.height;
             addChild(_sentTotal);

@@ -10,7 +10,7 @@ package commons.anim
      */    
     public interface IAnimation extends IDispose
     {
-        function init(rawData:Object):void;
+        function init(rawData:Object, dataKey:* = null):void;
         
         function get fps():uint;
         function set fps(value:uint):void;

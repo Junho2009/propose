@@ -11,7 +11,7 @@ package commons.manager
      */    
     public interface IAnimManager extends IManager
     {
-        function createAnim(animType:String, rawData:Object):IAnimation;
+        function createAnim(animType:String, rawData:Object, dataKey:* = null):IAnimation;
         
         function addAnim(anim:IAnimation):void;
         

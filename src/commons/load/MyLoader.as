@@ -98,6 +98,17 @@ package commons.load
             }
         }
         
+        public function loadCache(url:String, data:*, param:Object = null):void
+        {
+            _url = url;
+            _urlLoader.data = data;
+            _param = param;
+            
+            _fileType = FileType.getFileType(url);
+            
+            onUrlLoadCompleted(null);
+        }
+        
         public function removeListeners():void
         {
             for (var key:* in _listenerDic)
@@ -142,7 +153,7 @@ package commons.load
                 var progInfo:Object = new Object();
                 progInfo.bytesLoaded = e.bytesLoaded;
                 progInfo.bytesTotal = e.bytesTotal;
-                dispatchEvent(new MyLoaderEvent(MyLoaderEvent.PROGRESS, _url, progInfo, _param));
+                dispatchEvent(new MyLoaderEvent(MyLoaderEvent.PROGRESS, _url, progInfo, null, _param));
             }
         }
         
@@ -155,12 +166,12 @@ package commons.load
                 case FileType.PNG:
                 case FileType.JPG:
                 case FileType.SWF:
-                    _loaderLoading = true
+                    _loaderLoading = true;
                     _loader.loadBytes(_urlLoader.data, GlobalContext.getInstance().loaderContext);
                     break;
                 
                 default:
-                    dispatchEvent(new MyLoaderEvent(MyLoaderEvent.COMPLETE, _url, _urlLoader.data, _param));
+                    dispatchEvent(new MyLoaderEvent(MyLoaderEvent.COMPLETE, _url, _urlLoader.data, _urlLoader.data, _param));
                     break;
             }
         }
@@ -169,14 +180,14 @@ package commons.load
         {
             _bUrlLoading = false;
             Debug.log("URL加载发生IO错误，url：{0}", _url);
-            dispatchEvent(new MyLoaderEvent(MyLoaderEvent.FAILED, _url, _loader.content, _param));
+            dispatchEvent(new MyLoaderEvent(MyLoaderEvent.FAILED, _url, _loader.content, _urlLoader.data, _param));
         }
         
         private function onUrlSecurityError(e:SecurityErrorEvent):void
         {
             _bUrlLoading = false;
             Debug.log("URL加载发生安全错误，url：{0}", _url);
-            dispatchEvent(new MyLoaderEvent(MyLoaderEvent.FAILED, _url, _loader.content, _param));
+            dispatchEvent(new MyLoaderEvent(MyLoaderEvent.FAILED, _url, _loader.content, _urlLoader.data, _param));
         }
         
         
@@ -184,21 +195,21 @@ package commons.load
         private function onDisplayObjLoadCompleted(e:Event):void
         {
             _loaderLoading = false;
-            dispatchEvent(new MyLoaderEvent(MyLoaderEvent.COMPLETE, _url, _loader.content, _param));
+            dispatchEvent(new MyLoaderEvent(MyLoaderEvent.COMPLETE, _url, _loader.content, _urlLoader.data, _param));
         }
         
         private function onDisplayObjLoadIOError(e:IOErrorEvent):void
         {
             _loaderLoading = false;
             Debug.log("显示对象加载发生IO错误，url：{0}", _url);
-            dispatchEvent(new MyLoaderEvent(MyLoaderEvent.FAILED, _url, _loader.content, _param));
+            dispatchEvent(new MyLoaderEvent(MyLoaderEvent.FAILED, _url, _loader.content, _urlLoader.data, _param));
         }
         
         private function onDisplayObjLoadSecurityError(e:SecurityErrorEvent):void
         {
             _loaderLoading = false;
             Debug.log("显示对象加载发生安全错误，url：{0}", _url);
-            dispatchEvent(new MyLoaderEvent(MyLoaderEvent.FAILED, _url, _loader.content, _param));
+            dispatchEvent(new MyLoaderEvent(MyLoaderEvent.FAILED, _url, _loader.content, _urlLoader.data, _param));
         }
     }
 }

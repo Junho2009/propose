@@ -22,6 +22,7 @@ package commons.anim
     public class BitmapMC extends Sprite implements IAnimation
     {
         private var _rawData:Object = null;
+        private var _dataKey:* = null;
         
         private var _frameList:Vector.<BitmapFrame>;
         
@@ -51,9 +52,10 @@ package commons.anim
             addChild(_curBmp);
         }
         
-        public function init(rawData:Object):void
+        public function init(rawData:Object, dataKey:* = null):void
         {
             _rawData = rawData;
+            _dataKey = dataKey;
             
             if (rawData is MovieClip)
                 createEmptyFramesByMC(rawData as MovieClip);
@@ -219,7 +221,7 @@ package commons.anim
             var cacheMgr:ICacheManager = ManagerHub.getInstance().getManager(ManagerGlobalName.CacheManager) as ICacheManager;
             if (null != cacheMgr)
             {
-                var mcFrameResKey:String = StringUtil.substitute("{0}-{1}", mc.name, frameNo);
+                var mcFrameResKey:String = StringUtil.substitute("{0}-{1}", _dataKey, frameNo);
                 bd = cacheMgr.getData(mcFrameResKey);
                 if (null == bd)
                 {

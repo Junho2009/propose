@@ -30,7 +30,7 @@ package commons.anim
             registerAnimClasses();
         }
         
-        public function createAnim(animType:String, rawData:Object):IAnimation
+        public function createAnim(animType:String, rawData:Object, dataKey:* = null):IAnimation
         {
             var anim:IAnimation = null;
             
@@ -38,7 +38,7 @@ package commons.anim
             if (null != animClass)
             {
                 anim = new animClass();
-                anim.init(rawData);
+                anim.init(rawData, dataKey);
             }
             
             return anim;

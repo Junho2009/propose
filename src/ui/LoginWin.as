@@ -70,6 +70,7 @@ package ui
             _input.align = TextFormatAlign.CENTER;
             _input.size = 14;
             _input.color = 0xffffff;
+            _input.maxChars = 10;
             _input.tips = "(输入您的名字)";
             _input.y = _tips.y + _tips.height;
             addChild(_input);

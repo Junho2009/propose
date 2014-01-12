@@ -4,6 +4,9 @@ package ui
     import flash.events.Event;
     import flash.events.MouseEvent;
     import flash.geom.Point;
+    import flash.text.TextFieldAutoSize;
+    
+    import mx.utils.StringUtil;
     
     import caurina.transitions.Tweener;
     
@@ -25,6 +28,7 @@ package ui
     import mud.protos.BlessProtoOut_ReqBlessList;
     
     import webgame.ui.GixButton;
+    import webgame.ui.GixText;
     import webgame.ui.View;
     import webgame.ui.Widget;
     
@@ -44,6 +48,7 @@ package ui
         private var _curPosY:Number = 0;
         private var _bPulledDown:Boolean = false;
         private var _bAutoPullDoing:Boolean = false;
+        private var _bPullDownManual:Boolean = false;
         
         private var _blessContentLayer:View;
         private var _blessPaperList:Vector.<BlessPaper>;
@@ -51,6 +56,11 @@ package ui
         private var _changePageBtn:GixButton;
         private var _maxPage:uint = 0;
         private var _curShowPage:uint = 0;
+        
+        private var _blessCountTips:GixText;
+        private var _blessCount:uint = 0;
+        
+        private var _bFirstRecvBlessInfo:Boolean = true;
         
         
         public function BlessWall()
@@ -68,6 +78,8 @@ package ui
             _blessPaperList = new Vector.<BlessPaper>();
             
             _changePageBtn = new GixButton();
+            
+            _blessCountTips = new GixText();
             
             visible = false;
             
@@ -92,6 +104,11 @@ package ui
             _changePageBtn.width = 120;
             _changePageBtn.height = 30;
             _changePageBtn.label = "看看其他祝福";
+            
+            _blessCountTips.init();
+            _blessCountTips.autoSize = TextFieldAutoSize.LEFT;
+            _blessCountTips.size = 16;
+            _blessCountTips.color = 0xffea00;
             
             var reqInfo:LoadRequestInfo = new LoadRequestInfo();
             reqInfo.url = FilePath.adapt+"blesswall_bg.jpg";
@@ -132,7 +149,7 @@ package ui
             
             _rope.x = img.width - 70;
             _rope.y = img.height;
-            _rope.addEventListener(MouseEvent.CLICK, onRoleClick);
+            _rope.addEventListener(MouseEvent.CLICK, onRopeClick);
             _rope.addEventListener(MouseEvent.MOUSE_DOWN, onRopeMouseDown);
             addChild(_rope);
             
@@ -140,6 +157,10 @@ package ui
             _changePageBtn.y = img.height - _changePageBtn.height - 20;
             _changePageBtn.addEventListener(MouseEvent.CLICK, onChangePage);
             addChild(_changePageBtn);
+            
+            _blessCountTips.x = _changePageBtn.x + _changePageBtn.width + 50;
+            _blessCountTips.y = _changePageBtn.y;
+            addChild(_blessCountTips);
             
             GlobalContext.getInstance().stage.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
             GlobalContext.getInstance().stage.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
@@ -152,10 +173,12 @@ package ui
             visible = true;
         }
         
-        private function onRoleClick(e:MouseEvent):void
+        private function onRopeClick(e:MouseEvent):void
         {
             if (_curPosY != e.stageY)
                 return;
+            
+            _bPullDownManual = !_bPulledDown;
             _bPulledDown ? onZipUp() : onPullDown();
         }
         
@@ -167,14 +190,19 @@ package ui
         
         private function onChangePage(e:MouseEvent):void
         {
+            const lastShowPage:uint = _curShowPage;
+            
             if (_curShowPage + 1 > _maxPage)
                 _curShowPage = 1;
             else
                 ++_curShowPage;
             
-            var reqBlessListProto:BlessProtoOut_ReqBlessList = new BlessProtoOut_ReqBlessList();
-            reqBlessListProto.page = _curShowPage;
-            NetBus.getInstance().send(reqBlessListProto);
+            if (lastShowPage != _curShowPage)
+            {
+                var reqBlessListProto:BlessProtoOut_ReqBlessList = new BlessProtoOut_ReqBlessList();
+                reqBlessListProto.page = _curShowPage;
+                NetBus.getInstance().send(reqBlessListProto);
+            }
         }
         
         private function onMouseMove(e:MouseEvent):void
@@ -283,11 +311,19 @@ package ui
         private function onRecvBlessInfo(inc:BlessProtoIn_BlessInfo):void
         {
             _maxPage = inc.page;
-            _curShowPage = MathUtil.randomInt(1, _maxPage);
             
-            var reqBlessListProto:BlessProtoOut_ReqBlessList = new BlessProtoOut_ReqBlessList();
-            reqBlessListProto.page = _curShowPage;
-            NetBus.getInstance().send(reqBlessListProto);
+            _blessCountTips.text = StringUtil.substitute("总共{0}条祝福", inc.count);
+            
+            if (_bFirstRecvBlessInfo)
+            {
+                _bFirstRecvBlessInfo = false;
+                
+                _curShowPage = MathUtil.randomInt(1, _maxPage);
+                
+                var reqBlessListProto:BlessProtoOut_ReqBlessList = new BlessProtoOut_ReqBlessList();
+                reqBlessListProto.page = _curShowPage;
+                NetBus.getInstance().send(reqBlessListProto);
+            }
         }
         
         private function onRecvBlessList(inc:BlessProtoIn_BlessList):void
@@ -350,7 +386,9 @@ package ui
                 blessPaper.visible = true;
                 mouseChildren = true;
                 mouseEnabled = true;
-                onZipUp();
+                
+                if (!_bPullDownManual)
+                    onZipUp();
             };
             
             var gPos:Point = _blessContentLayer.localToGlobal(pos);

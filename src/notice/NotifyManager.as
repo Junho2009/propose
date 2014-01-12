@@ -45,7 +45,7 @@ package notice
             var content:String = data.content;
             var callback:Function = data.callback;
             
-            _noticeView.showNotice(content, 5000
+            _noticeView.showNotice(content, 3000
                 , function():void
                 {
                     _noticeList.shift();

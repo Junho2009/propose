@@ -111,7 +111,11 @@ package flowersend
         
         private function onShowEffect(inc:FlowerProtoIn_ShowEffect):void
         {
-            _sceneMgr.playEffect(1);
+            var notice:String = StringUtil.substitute("全体朋友已经送给了我们{0}朵鲜花，太感动！QvQ", _totalSentNum);
+            _notifyMgr.showNotice(notice, function():void
+            {
+                _sceneMgr.playEffect(1);
+            });
         }
     }
 }

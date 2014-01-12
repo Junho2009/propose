@@ -178,7 +178,8 @@ package ui
             params.transition = "easeInOutCirc";
             params.onComplete = function():void
             {
-                callback();
+                if (null != callback)
+                    callback();
                 
                 alpha = 0;
                 _timeMgr.setTask(fadeIn, 1024, false);
